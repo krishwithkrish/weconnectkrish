@@ -134,9 +134,9 @@
                 <button onclick="toggleEditProfile('client')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs px-4 py-2.5 rounded-lg border border-gray-300 flex items-center justify-center space-x-1.5">
                     <i class="fa-solid fa-pen-to-square"></i> <span>Edit Employer Profile</span>
                 </button>
-                <button onclick="openJobOrderModal()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow flex items-center justify-center space-x-1.5 tracking-wide">
-                    <i class="fa-solid fa-plus"></i> <span>Post New Job</span>
-                </button>
+<button onclick="openJobModal()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow flex items-center justify-center space-x-1.5 tracking-wide">
+    <i class="fa-solid fa-plus"></i> <span>Post New Job Order</span>
+</button>
             </div>
         </div>
 
@@ -1831,6 +1831,53 @@ async function handlePasswordReset() {
     }, 5000);
 })();
 
+// Function to open the Job Order Container/Modal
+function openJobModal() {
+    const modal = document.getElementById('jobModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex'); // Tailwind uses flex for centered alignment
+        
+        // Ensure we start fresh: default to showing only the "Add New Job" trigger
+        resetJobOrderFormState();
+    }
+}
+
+// Function to close the Job Order Container/Modal
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+// Logic helper to manage form visual state inside the modal
+function resetJobOrderFormState() {
+    // Hide the 14-field spec form until they click "Add New Job"
+    const lineItemForm = document.getElementById('dynamicLineItemForm');
+    if (lineItemForm) lineItemForm.classList.add('hidden');
+    
+    // Show the initial "Add New Job" button trigger
+    const triggerBtn = document.getElementById('btnTriggerNewJobForm');
+    if (triggerBtn) triggerBtn.classList.remove('hidden');
+}
+
+// Function tied to the "Add New Job" button inside the modal
+function showLineItemForm() {
+    const lineItemForm = document.getElementById('dynamicLineItemForm');
+    if (lineItemForm) {
+        lineItemForm.classList.remove('hidden');
+    }
+}
+
+function hideLineItemForm() {
+    const lineItemForm = document.getElementById('dynamicLineItemForm');
+    if (lineItemForm) {
+        lineItemForm.classList.add('hidden');
+    }
+}        
+        
     </script>
 </body>
 </html>
