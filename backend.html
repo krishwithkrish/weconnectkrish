@@ -134,9 +134,9 @@
                 <button onclick="toggleEditProfile('client')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs px-4 py-2.5 rounded-lg border border-gray-300 flex items-center justify-center space-x-1.5">
                     <i class="fa-solid fa-pen-to-square"></i> <span>Edit Employer Profile</span>
                 </button>
-<button onclick="openJobModal()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow flex items-center justify-center space-x-1.5 tracking-wide">
-    <i class="fa-solid fa-plus"></i> <span>Post New Job Order</span>
-</button>
+                <button onclick="openJobOrderModal()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow flex items-center justify-center space-x-1.5 tracking-wide">
+                    <i class="fa-solid fa-plus"></i> <span>Post New Job Order</span>
+                </button>
             </div>
         </div>
 
@@ -418,7 +418,7 @@
             <button onclick="closeModal('viewSpecsSheetModal')" class="px-4 py-1.5 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded text-xs">Close Manifest View</button>
         </div>
     </div>
-</div>            
+</div>
             
             <div id="view-agent" class="view-section hidden flex-1 lg:overflow-y-auto max-w-7xl mx-auto w-full py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
                 <div class="bg-white border border-gray-200 rounded-xl p-5 mb-6 shadow-xs">
@@ -1831,53 +1831,149 @@ async function handlePasswordReset() {
     }, 5000);
 })();
 
-// Function to open the Job Order Container/Modal
-function openJobModal() {
-    const modal = document.getElementById('jobModal');
-    if (modal) {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex'); // Tailwind uses flex for centered alignment
-        
-        // Ensure we start fresh: default to showing only the "Add New Job" trigger
-        resetJobOrderFormState();
+package com.connect.portal.joborder;
+
+import lombok.Data;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicLong;
+
+/**
+ * ============================================================================
+ * 1. BACKEND ENTERPRISE DATA STRUCTURE DTO MODELS
+ * ============================================================================
+ */
+
+@Data
+class JobOrderRequest {
+    private String workCountry;
+    private LocalDate projectDeadline;
+    private List<JobLineItem> lineItems = new ArrayList<>();
+}
+
+@Data
+class JobLineItem {
+    private String jobCategory;
+    private Integer quantity;
+    private Double salary;
+    private String currency;
+    private Integer workingHoursPerDay;
+    private Integer workingDaysPerWeek;
+    private String ot;
+    private String foodAllowance;
+    private String accommodation;
+    private String medicalInsurance;
+    private String visa;
+    private String ticket;
+}
+
+@Data
+class JobOrderResponse {
+    private String referenceNumber; // E.g., "Connect-1001"
+    private LocalDate postingDate;
+    private String workCountry;
+    private LocalDate projectDeadline;
+    private Integer totalQuantityNeeded;
+    private List<JobLineItem> lineItems;
+    private Integer interestedAgencies;
+    private String workflowStatus;
+}
+
+@Data
+class DashboardMetricsDTO {
+    private long totalJobOrders;
+    private long totalActiveVacancies;
+}
+
+/**
+ * ============================================================================
+ * 2. DATA PROCESSING SERVICES REPOSITORY CORE LAYER
+ * ============================================================================
+ */
+class JobOrderService {
+    // Concurrent memory matrix simulating dynamic cross-profile persistent data arrays
+    private final List<JobOrderResponse> databasePersistenceStorage = new CopyOnWriteArrayList<>();
+    // Sequential counter engine shared across all active client enterprise accounts
+    private final AtomicLong referenceSequenceGenerator = new AtomicLong(1001);
+
+    public JobOrderResponse processAndPublishOrder(JobOrderRequest request) {
+        if (request.getLineItems() == null || request.getLineItems().isEmpty()) {
+            throw new IllegalArgumentException("Staged allocation manifest requires at least 1 Line Item config mapping.");
+        }
+
+        // Cumulative quantity summation map arithmetic
+        int combinedVacanciesSum = request.getLineItems().stream()
+                .mapToInt(JobLineItem::getQuantity)
+                .sum();
+
+        // Instantiate final historical uneditable specification payload structures
+        JobOrderResponse record = new JobOrderResponse();
+        record.setReferenceNumber("Connect-" + referenceSequenceGenerator.getAndIncrement());
+        record.setPostingDate(LocalDate.now());
+        record.setWorkCountry(request.getWorkCountry());
+        record.setProjectDeadline(request.getProjectDeadline());
+        record.setTotalQuantityNeeded(combinedVacanciesSum);
+        record.setLineItems(request.getLineItems());
+        record.setInterestedAgencies(0);
+        record.setWorkflowStatus("Active Database Processing");
+
+        databasePersistenceStorage.add(record);
+        return record;
+    }
+
+    public List<JobOrderResponse> getAllActiveOrders() {
+        return databasePersistenceStorage;
+    }
+
+    public DashboardMetricsDTO calculateSummaryKPIs() {
+        long grandTotalVacanciesSum = databasePersistenceStorage.stream()
+                .mapToLong(JobOrderResponse::getTotalQuantityNeeded)
+                .sum();
+
+        DashboardMetricsDTO metrics = new DashboardMetricsDTO();
+        metrics.setTotalJobOrders(databasePersistenceStorage.size());
+        metrics.setTotalActiveVacancies(grandTotalVacanciesSum);
+        return metrics;
     }
 }
 
-// Function to close the Job Order Container/Modal
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
+/**
+ * ============================================================================
+ * 3. ENTERPRISE REST CONTROLLER LAYER WRAPPER
+ * ============================================================================
+ */
+@RestController
+@RequestMapping("/api/v1/workspace/employer/job-orders")
+@CrossOrigin(origins = "*") // Global integration proxy access mapping context
+public class JobOrderController {
+
+    private final JobOrderService jobOrderService = new JobOrderService();
+
+    @PostMapping("/publish")
+    public ResponseEntity<JobOrderResponse> publishJobOrder(@RequestBody JobOrderRequest payload) {
+        try {
+            JobOrderResponse outputRecord = jobOrderService.processAndPublishOrder(payload);
+            return ResponseEntity.ok(outputRecord);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().build();
+        }
     }
-}
 
-// Logic helper to manage form visual state inside the modal
-function resetJobOrderFormState() {
-    // Hide the 14-field spec form until they click "Add New Job"
-    const lineItemForm = document.getElementById('dynamicLineItemForm');
-    if (lineItemForm) lineItemForm.classList.add('hidden');
-    
-    // Show the initial "Add New Job" button trigger
-    const triggerBtn = document.getElementById('btnTriggerNewJobForm');
-    if (triggerBtn) triggerBtn.classList.remove('hidden');
-}
-
-// Function tied to the "Add New Job" button inside the modal
-function showLineItemForm() {
-    const lineItemForm = document.getElementById('dynamicLineItemForm');
-    if (lineItemForm) {
-        lineItemForm.classList.remove('hidden');
+    @GetMapping("/archive")
+    public ResponseEntity<List<JobOrderResponse>> getJobOrdersArchiveLog() {
+        return ResponseEntity.ok(jobOrderService.getAllActiveOrders());
     }
-}
 
-function hideLineItemForm() {
-    const lineItemForm = document.getElementById('dynamicLineItemForm');
-    if (lineItemForm) {
-        lineItemForm.classList.add('hidden');
+    @GetMapping("/kpis-summary")
+    public ResponseEntity<DashboardMetricsDTO> getDashboardKPIs() {
+        return ResponseEntity.ok(jobOrderService.calculateSummaryKPIs());
     }
 }        
-        
     </script>
 </body>
 </html>
