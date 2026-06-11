@@ -121,88 +121,304 @@
                     </div>
                 </div>
            </div>
-                
-            <div id="view-client" class="view-section hidden flex-1 lg:overflow-y-auto max-w-7xl mx-auto w-full py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
-                <div class="bg-white rounded-xl shadow-xs border border-gray-200 p-5 mb-6">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-4">
+
+<div id="view-client" class="view-section hidden flex-1 lg:overflow-y-auto max-w-7xl mx-auto w-full py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
+    <div class="bg-white rounded-xl shadow-xs border border-gray-200 p-5 mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-4">
+            <div>
+                <span class="bg-blue-100 text-blue-800 text-[10px] font-semibold px-2.5 py-0.5 rounded uppercase tracking-wider">Client Workspace Portal</span>
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mt-1" id="workspace-client-name">Employer Dashboard</h2>
+                <div id="workspace-client-meta" class="text-xs text-gray-600 mt-2 font-medium space-y-1"></div>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                <button onclick="toggleEditProfile('client')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs px-4 py-2.5 rounded-lg border border-gray-300 flex items-center justify-center space-x-1.5">
+                    <i class="fa-solid fa-pen-to-square"></i> <span>Edit Employer Profile</span>
+                </button>
+                <button onclick="openJobOrderModal()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow flex items-center justify-center space-x-1.5 tracking-wide">
+                    <i class="fa-solid fa-plus"></i> <span>Post New Job Order</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="client-edit-form-container" class="hidden mt-4 pt-4 border-t border-gray-200 bg-gray-50 p-4 rounded-xl">
+            <h4 class="font-bold text-sm text-gray-900 mb-3"><i class="fa-solid fa-user-gear text-blue-900 mr-2"></i>Modify Employer Corporate Profile Details</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Employer Name</label>
+                    <input type="text" id="editClientCompany" class="w-full border p-2 rounded bg-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Employer City</label>
+                    <input type="text" id="editClientCity" class="w-full border p-2 rounded bg-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Employer Country</label>
+                    <input type="text" id="editClientCountry" class="w-full border p-2 rounded bg-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Corporate Phone</label>
+                    <input type="text" id="editClientPhone" class="w-full border p-2 rounded bg-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Employer Mobile Number</label>
+                    <input type="text" id="editClientMobile" class="w-full border p-2 rounded bg-white">
+                </div>
+            </div>
+            <div class="mt-4 flex justify-end space-x-2">
+                <button onclick="toggleEditProfile('client')" class="px-3 py-1.5 bg-gray-200 text-gray-700 font-bold rounded text-xs">Cancel</button>
+                <button onclick="saveProfileChanges('client')" class="px-4 py-1.5 bg-blue-900 text-white font-bold rounded text-xs shadow">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6">
+        <div class="bg-white p-4 rounded-xl shadow-xs border border-gray-200 flex flex-col justify-center">
+            <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Your Total Job Orders</p>
+            <p class="text-xl sm:text-2xl font-bold text-gray-900 mt-0.5" id="client-total-orders">0</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow-xs border border-gray-200 flex flex-col justify-center">
+            <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Total Active Vacancies</p>
+            <p class="text-xl sm:text-2xl font-bold text-emerald-600 mt-0.5" id="client-active-vacancies">0</p>
+        </div>
+        <div class="hidden" id="client-pitches-count"></div>
+    </div>
+
+    <div id="jobModal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-xl shadow-xl border border-gray-200 w-full max-w-4xl max-h-[90vh] flex flex-col animate-in fade-in zoom-in-95 duration-200">
+            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-xl">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900">Create Bulk Job Order Request</h3>
+                    <p class="text-xs text-gray-500 mt-0.5">Define your target hiring location, global execution timeline, and specify multi-line item jobs.</p>
+                </div>
+                <button onclick="closeModal('jobModal')" class="text-gray-400 hover:text-gray-600 text-lg p-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="p-6 overflow-y-auto flex-1 space-y-6">
+                <div class="bg-blue-50/50 border border-blue-100 rounded-xl p-4">
+                    <h4 class="text-xs font-bold uppercase text-blue-900 tracking-wider mb-3"><i class="fa-solid fa-earth-americas mr-1.5"></i>Global Project Configuration Parameters</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <span class="bg-blue-100 text-blue-800 text-[10px] font-semibold px-2.5 py-0.5 rounded uppercase tracking-wider">Client Workspace Portal</span>
-                            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mt-1" id="workspace-client-name">Employer Dashboard</h2>
-                            <div id="workspace-client-meta" class="text-xs text-gray-600 mt-2 font-medium space-y-1"></div>
+                            <label class="block text-[11px] font-bold text-gray-700 uppercase mb-1">1. Work Country <span class="text-red-500">*</span></label>
+                            <select id="commonWorkCountry" class="w-full border border-gray-300 p-2.5 rounded-lg bg-white text-xs shadow-xs focus:ring-1 focus:ring-blue-900 focus:border-blue-900">
+                                <option value="" selected disabled>Select Country</option>
+                                <option value="Australia">Australia</option>
+                                <option value="Bahrain">Bahrain</option>
+                                <option value="Canada">Canada</option>
+                                <option value="China">China</option>
+                                <option value="France">France</option>
+                                <option value="Germany">Germany</option>
+                                <option value="Hong Kong">Hong Kong</option>
+                                <option value="India">India</option>
+                                <option value="Ireland">Ireland</option>
+                                <option value="Israel">Israel</option>
+                                <option value="Italy">Italy</option>
+                                <option value="Kuwait">Kuwait</option>
+                                <option value="Malaysia">Malaysia</option>
+                                <option value="Oman">Oman</option>
+                                <option value="Poland">Poland</option>
+                                <option value="Qatar">Qatar</option>
+                                <option value="Russia">Russia</option>
+                                <option value="KSA">Saudi Arabia (KSA)</option>
+                                <option value="Singapore">Singapore</option>
+                                <option value="UAE">UAE</option>
+                                <option value="UK">UK</option>
+                                <option value="USA">USA</option>
+                            </select>
                         </div>
-                        <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-                            <button onclick="toggleEditProfile('client')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs px-4 py-2.5 rounded-lg border border-gray-300 flex items-center justify-center space-x-1.5">
-                                <i class="fa-solid fa-pen-to-square"></i> <span>Edit Employer Profile</span>
-                            </button>
-                            <button onclick="openModal('jobModal')" class="bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow flex items-center justify-center space-x-1.5 tracking-wide">
-                                <i class="fa-solid fa-plus"></i> <span>Post New Job</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div id="client-edit-form-container" class="hidden mt-4 pt-4 border-t border-gray-200 bg-gray-50 p-4 rounded-xl">
-                        <h4 class="font-bold text-sm text-gray-900 mb-3"><i class="fa-solid fa-user-gear text-blue-900 mr-2"></i>Modify Employer Corporate Profile Details</h4>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Employer Name</label>
-                                <input type="text" id="editClientCompany" class="w-full border p-2 rounded bg-white">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Employer City</label>
-                                <input type="text" id="editClientCity" class="w-full border p-2 rounded bg-white">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Employer Country</label>
-                                <input type="text" id="editClientCountry" class="w-full border p-2 rounded bg-white">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Corporate Phone</label>
-                                <input type="text" id="editClientPhone" class="w-full border p-2 rounded bg-white">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Employer Mobile Number</label>
-                                <input type="text" id="editClientMobile" class="w-full border p-2 rounded bg-white">
-                            </div>
-                        </div>
-                        <div class="mt-4 flex justify-end space-x-2">
-                            <button onclick="toggleEditProfile('client')" class="px-3 py-1.5 bg-gray-200 text-gray-700 font-bold rounded text-xs">Cancel</button>
-                            <button onclick="saveProfileChanges('client')" class="px-4 py-1.5 bg-blue-900 text-white font-bold rounded text-xs shadow">Save Settings</button>
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-700 uppercase mb-1">2. Project Deadline <span class="text-red-500">*</span></label>
+                            <input type="date" id="commonProjectDeadline" class="w-full border border-gray-300 p-2.5 rounded-lg bg-white text-xs shadow-xs focus:ring-1 focus:ring-blue-900 focus:border-blue-900">
                         </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6">
-                    <div class="bg-white p-4 rounded-xl shadow-xs border border-gray-200 flex flex-col justify-center">
-                        <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Your Registered Job Postings</p>
-                        <p class="text-xl sm:text-2xl font-bold text-gray-900 mt-0.5" id="client-total-orders">0</p>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl shadow-xs border border-gray-200 flex flex-col justify-center">
-                        <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Active Approved Open Positions</p>
-                        <p class="text-xl sm:text-2xl font-bold text-emerald-600 mt-0.5" id="client-active-vacancies">0</p>
-                    </div>
-                    <div class="hidden" id="client-pitches-count"></div>
+                <div class="flex justify-start">
+                    <button type="button" id="btnTriggerNewJobForm" onclick="showLineItemForm()" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xs px-4 py-2.5 rounded-lg border border-gray-300 flex items-center space-x-1.5 transition-all">
+                        <i class="fa-solid fa-plus-circle text-blue-900"></i> <span>Add New Job</span>
+                    </button>
                 </div>
 
-                <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-3">Your Dynamic Quota Postings</h3>
-                <div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
+                <div id="dynamicLineItemForm" class="hidden bg-white border border-gray-200 rounded-xl p-5 shadow-xs animate-in fade-in slide-in-from-top-4 duration-200">
+                    <div class="border-b border-gray-100 pb-2 mb-4 flex justify-between items-center">
+                        <h5 class="text-xs font-bold uppercase text-gray-800 tracking-wider">Configure Line Item Specifications</h5>
+                        <button type="button" onclick="hideLineItemForm()" class="text-xs text-gray-400 hover:text-red-600"><i class="fa-solid fa-trash-can mr-1"></i>Discard Form</button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">3. Job Category</label>
+                            <input type="text" id="jobFieldCategory" placeholder="e.g. Structural Welder" class="w-full border border-gray-300 p-2 rounded bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">4. Quantity</label>
+                            <input type="number" id="jobFieldQuantity" min="1" placeholder="e.g. 25" class="w-full border border-gray-300 p-2 rounded bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">5. Base Salary</label>
+                            <input type="number" id="jobFieldSalary" min="0" placeholder="e.g. 4500" class="w-full border border-gray-300 p-2 rounded bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">6. Currency</label>
+                            <select id="jobFieldCurrency" class="w-full border border-gray-300 p-2 rounded bg-white text-xs">
+                                <option value="" selected disabled>Select Currency</option>
+                                <option value="AED">AED</option>
+                                <option value="AUD">AUD</option>
+                                <option value="BHD">BHD</option>
+                                <option value="CAD">CAD</option>
+                                <option value="CNY">CNY</option>
+                                <option value="EUR">EUR</option>
+                                <option value="GBP">GBP</option>
+                                <option value="HKD">HKD</option>
+                                <option value="ILS">ILS</option>
+                                <option value="INR">INR</option>
+                                <option value="KWD">KWD</option>
+                                <option value="MYR">MYR</option>
+                                <option value="OMR">OMR</option>
+                                <option value="QAR">QAR</option>
+                                <option value="RUB">RUB</option>
+                                <option value="SAR">SAR</option>
+                                <option value="SGD">SGD</option>
+                                <option value="USD">USD</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">7. Working Hours / Day</label>
+                            <input type="number" id="jobFieldHours" min="1" max="24" placeholder="e.g. 8" class="w-full border border-gray-300 p-2 rounded bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">8. Working Days / Week</label>
+                            <input type="number" id="jobFieldDays" min="1" max="7" placeholder="e.g. 6" class="w-full border border-gray-300 p-2 rounded bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">9. Overtime (OT)</label>
+                            <select id="jobFieldOT" class="w-full border border-gray-300 p-2 rounded bg-white text-xs">
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">10. Food / Allowance</label>
+                            <select id="jobFieldFood" class="w-full border border-gray-300 p-2 rounded bg-white text-xs">
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">11. Accommodation</label>
+                            <select id="jobFieldAccommodation" class="w-full border border-gray-300 p-2 rounded bg-white text-xs">
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">12. Medical / Insurance</label>
+                            <select id="jobFieldMedical" class="w-full border border-gray-300 p-2 rounded bg-white text-xs">
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">13. Provided Visa</label>
+                            <select id="jobFieldVisa" class="w-full border border-gray-300 p-2 rounded bg-white text-xs">
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">14. Air Ticket Allowance</label>
+                            <select id="jobFieldTicket" class="w-full border border-gray-300 p-2 rounded bg-white text-xs">
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                                <option value="1 Way Only">1 Way Only</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <button type="button" onclick="addCurrentJobToList()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs px-4 py-2 rounded shadow flex items-center space-x-1">
+                            <i class="fa-solid fa-list-check"></i> <span>Add To List</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="border border-gray-200 rounded-xl overflow-hidden bg-gray-50/50">
+                    <div class="p-3 bg-gray-100 border-b border-gray-200 text-xs font-bold text-gray-700 flex justify-between items-center">
+                        <span>STAGED REQUIREMENTS REGISTRATION LINE ITEMS</span>
+                        <span id="staged-count-badge" class="bg-blue-900 text-white text-[10px] px-2 py-0.5 rounded-full font-mono">0 Items Loaded</span>
+                    </div>
                     <div class="overflow-x-auto w-full">
-                        <table class="w-full text-left border-collapse whitespace-nowrap min-w-[600px]">
+                        <table class="w-full text-left border-collapse whitespace-nowrap text-xs">
                             <thead>
-                                <tr class="bg-gray-50 border-b border-gray-200 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-gray-500">
-                                    <th class="p-3">Job Title</th>
-                                    <th class="p-3">Employer Country</th>
-                                    <th class="p-3">Vacancies Required</th>
-                                    <th class="p-3">Monthly Package</th>
-                                    <th class="p-3">SLBFE Approval</th>
-                                    <th class="p-3">Interested Agencies</th>
-                                    <th class="p-3">Workflow Status</th><th class="p-3">Actions</th>
+                                <tr class="bg-white border-b border-gray-200 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                                    <th class="p-2.5 pl-4">Item #</th>
+                                    <th class="p-2.5">Category</th>
+                                    <th class="p-2.5 text-center">Qty</th>
+                                    <th class="p-2.5">Remuneration Package</th>
+                                    <th class="p-2.5 text-center">Hours / Days</th>
+                                    <th class="p-2.5 text-center">Perks Matrix (9-14)</th>
+                                    <th class="p-2.5 text-center pr-4">Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="client-job-table" class="divide-y divide-gray-100 text-xs"></tbody>
+                            <tbody id="staged-line-items-tbody" class="divide-y divide-gray-100 bg-white text-[11px]">
+                                <tr id="empty-stage-row">
+                                    <td colspan="7" class="p-8 text-center text-gray-400 italic font-medium">No requirements added to line items list yet. Fill fields configuration above and select 'Add To List'.</td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
             </div>
+
+            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end items-center space-x-2 rounded-b-xl">
+                <button type="button" onclick="closeModal('jobModal')" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-lg text-xs transition-colors">Cancel</button>
+                <button type="button" id="btnPublishJobOrder" onclick="commitPublishJobOrderRequest()" class="hidden px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs shadow tracking-wide transition-colors">
+                    <i class="fa-solid fa-cloud-arrow-up mr-1.5"></i>Publish Job Order
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-3">Your Job Orders</h3>
+    <div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto w-full">
+            <table class="w-full text-left border-collapse whitespace-nowrap min-w-[600px]">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-200 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-gray-500">
+                        <th class="p-3 pl-4">Job Reference Number</th>
+                        <th class="p-3">Posting Date</th>
+                        <th class="p-3 text-center">Total Quantity Needed</th>
+                        <th class="p-3">Deadline</th>
+                        <th class="p-3 text-center">Specifications Sheet</th>
+                        <th class="p-3">Interested Agencies</th>
+                        <th class="p-3">Workflow Status</th>
+                        <th class="p-3 pr-4 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="client-job-table" class="divide-y divide-gray-100 text-xs">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="viewSpecsSheetModal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-xl shadow-xl border border-gray-200 w-full max-w-4xl max-h-[90vh] flex flex-col">
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-900 text-white rounded-t-xl flex justify-between items-center">
+            <div>
+                <div class="flex items-center space-x-2">
+                    <span class="text-xs font-mono uppercase bg-blue-800 text-blue-200 px-2 py-0.5 rounded font-bold" id="lblSheetRefNo">CONNECT-XXXX</span>
+                    <h3 class="text-base font-bold">Uneditable Manifest Specifications Sheet</h3>
+                </div>
+                <p class="text-[11px] text-gray-300 mt-0.5">Historical verification view for corporate workflow execution requirements</p>
+            </div>
+            <button onclick="closeModal('viewSpecsSheetModal')" class="text-gray-400 hover:text-white text-lg p-1"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="p-6 overflow-y-auto flex-1 space-y-4 text-xs" id="specsSheetRenderContainer">
+            </div>
+        <div class="px-6 py-3 border-t border-gray-100 bg-gray-50 flex justify-end rounded-b-xl">
+            <button onclick="closeModal('viewSpecsSheetModal')" class="px-4 py-1.5 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded text-xs">Close Manifest View</button>
+        </div>
+    </div>
+</div>            
             
             <div id="view-agent" class="view-section hidden flex-1 lg:overflow-y-auto max-w-7xl mx-auto w-full py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
                 <div class="bg-white border border-gray-200 rounded-xl p-5 mb-6 shadow-xs">
@@ -565,7 +781,7 @@
     <div id="jobModal" class="fixed inset-0 bg-black/60 hidden z-50 items-center justify-center p-3 backdrop-blur-xs">
         <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden flex flex-col mx-auto max-h-[90vh]">
             <div class="bg-blue-900 text-white p-4 flex justify-between items-center">
-                <h3 class="font-bold text-sm sm:text-base tracking-wide"><i class="fa-solid fa-file-invoice-dollar mr-2"></i>Post New Job Specification Quota</h3>
+                <h3 class="font-bold text-sm sm:text-base tracking-wide"><i class="fa-solid fa-file-invoice-dollar mr-2"></i>Job Order Details</h3>
                 <button onclick="closeModal('jobModal')" class="text-blue-200 hover:text-white text-2xl font-semibold leading-none">&times;</button>
             </div>
             <form id="jobForm" onsubmit="handleJobPost(event)" class="p-4 space-y-3.5 text-xs sm:text-sm overflow-y-auto">
