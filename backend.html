@@ -6,12 +6,6 @@
     <title>weconnect.lk - B2B Job Order Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- ============================================================
-         SUPABASE CLIENT
-         Replace the two SUPABASE_* values below with your own project
-         URL and anon/public key from:
-         Supabase Dashboard → Project Settings → API
-    ============================================================ -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @media (min-width: 1024px) {
@@ -34,172 +28,228 @@
         @media (max-width: 1023px) {
             html, body {
                 height: auto;
-                min-height: 100vh;
-                overflow-y: auto;
+                overflow: auto;
             }
             .page-wrapper {
                 height: auto;
-                min-height: 100vh;
-                overflow-y: auto;
+                overflow: auto;
+            }
+            .main-container {
+                height: auto !important;
             }
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans">
+<body class="bg-gray-50 font-sans text-gray-800 antialiased flex flex-col page-wrapper">
 
-    <div class="page-wrapper flex flex-col w-full">
-
-<nav id="public-header" class="bg-white text-gray-800 shadow-md h-auto min-h-[3.5rem] lg:h-14 border-b border-gray-200 shrink-0 flex items-center z-50 py-1.5 lg:py-0">
-    <div class="w-full px-4 sm:px-4 flex flex-col lg:flex-row justify-between items-center gap-1.5 lg:gap-0">
-        <div class="flex items-center space-x-2 cursor-pointer select-none" onclick="switchRole('landing')">
-            <i class="fa-solid fa-circle-nodes text-emerald-500 text-xl sm:text-2xl"></i>
-            <span class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-blue-900">weconnect<span class="text-emerald-500">.lk</span></span>
-        </div>
-         <div class="flex flex-wrap items-center justify-center gap-2">
-             <a href="/index.html" class="text-[10px] sm:text-xs font-bold px-2.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white border-b-4 border-emerald-700 active:border-b-0 active:mt-1 transition-all shadow-md inline-block no-underline">
-                Home
-            </a>
-             <button onclick="openModal('clientLoginModal')" class="text-[10px] sm:text-xs font-bold px-2.5 py-1.5 rounded-lg bg-blue-900 hover:bg-blue-800 text-white border-b-4 border-blue-950 active:border-b-0 active:mt-1 transition-all shadow-md">
-                Employer Login
-            </button>
-            <button onclick="openModal('agentLoginModal')" class="text-[10px] sm:text-xs font-bold px-2.5 py-1.5 rounded-lg bg-blue-900 hover:bg-blue-800 text-white border-b-4 border-blue-950 active:border-b-0 active:mt-1 transition-all shadow-md">
-                Agency Login
-            </button>
-        </div>
-    </div>
-</nav>
-
-<div id="secure-header" class="bg-slate-900 text-white h-auto min-h-[2.5rem] lg:min-h-[3.5rem] lg:h-14 px-4 sm:px-6 justify-between items-center hidden shrink-0 shadow-lg z-50 py-1 lg:py-0 flex-col sm:flex-row gap-1 sm:gap-0">
-            <div class="flex items-center space-x-3 text-center sm:text-left">
-                <span class="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse hidden sm:inline-block"></span>
-                <span id="secure-user-label" class="text-[10px] sm:text-xs font-mono tracking-wider uppercase font-bold text-slate-300">Session Status</span>
+    <header id="app-header" class="bg-white border-b border-gray-200 shrink-0 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateToSection('home')">
+                <div class="w-8 h-8 rounded-lg bg-blue-900 flex items-center justify-center shadow-xs">
+                    <i class="fa-solid fa-handshake text-white text-sm"></i>
+                </div>
+                <span class="text-lg font-black text-gray-900 tracking-tight">weconnect<span class="text-blue-900 font-medium">.lk</span></span>
             </div>
-            <button onclick="handleLogout()" class="text-[10px] sm:text-xs font-bold px-3 py-1 rounded-lg bg-rose-600 hover:bg-rose-500 text-white border-b-4 border-rose-800 active:border-b-0 active:mt-1 transition-all flex items-center space-x-2 shadow-md">
-                <i class="fa-solid fa-power-off"></i>
-                <span>Log Out</span>
-            </button>
-        </div>
-
-        <div class="main-container flex-1 lg:overflow-hidden flex flex-col w-full">
-
-            <div id="view-landing" class="view-section h-full flex flex-col lg:overflow-hidden w-full">
-                <div class="lg:flex-[0_0_62%] bg-gradient-to-r from-blue-900 to-indigo-950 text-white flex flex-col justify-center items-center px-4 py-8 lg:py-4 text-center shrink-0">
-                    <div class="flex flex-col items-center justify-center w-full max-w-5xl mx-auto tracking-tight px-2 text-center">
-                        <span class="block text-small sm:text-2xl lg:text-5xl font-black text-white">Bridging Global Employers</span>
-                        <span class="block text-lg sm:text-2xl lg:text-4xl font-black text-emerald-400 my-1 lg:my-0.5">&amp;</span>
-                        <span class="block text-small sm:text-2xl lg:text-5xl font-black text-white">Sri Lankan Foreign Employment Agencies</span>
-                        <div class="h-4 sm:h-18 lg:h-3"></div>
-                        <span class="block mt-4 sm:mt-7 lg:mt-10 text-lg sm:text-2xl lg:text-xl text-yellow-400 font-bold animate-blink px-4 max-w-2xl leading-tight">Source Candidates & Track Job Orders</span>
+            
+            <nav class="flex items-center space-x-2">
+                <div id="guest-header-actions" class="flex items-center space-x-2">
+                    <button onclick="toggleAuthModal('login')" class="text-xs font-bold text-gray-700 hover:text-blue-900 px-3 py-2 transition-colors">Log In</button>
+                    <button onclick="toggleAuthModal('signup')" class="bg-blue-900 hover:bg-blue-800 text-white text-xs font-bold px-4 py-2 rounded-lg shadow-xs transition-all">Sign Up</button>
+                </div>
+                <div id="auth-header-actions" class="hidden flex items-center space-x-4">
+                    <div class="flex items-center space-x-2 border-r border-gray-200 pr-4">
+                        <div class="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-900 font-bold text-xs" id="user-avatar-badge">U</div>
+                        <span class="text-xs font-semibold text-gray-700 max-w-[120px] truncate" id="lblUserDisplayIdentity">Loading profile...</span>
                     </div>
-                    <div class="mt-4 flex flex-row justify-center items-center gap-3 w-full max-w-md px-4">
-                        <button onclick="openModal('clientSignupModal')" class="w-1/2 bg-emerald-500 hover:bg-emerald-600 text-white text-xs sm:text-sm font-bold py-3 rounded-lg shadow-md transition duration-200 tracking-wide">Employer Signup</button>
-                        <button onclick="openModal('agentSignupModal')" class="w-1/2 bg-emerald-500 hover:bg-emerald-600 text-white text-xs sm:text-sm font-bold py-3 rounded-lg shadow-md transition duration-200 tracking-wide">Agency Sign Up</button>
+                    <button onclick="handleApplicationLogout()" class="text-gray-500 hover:text-red-600 text-sm p-1 transition-colors" title="Logout session">
+                        <i class="fa-solid fa-power-off"></i>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section id="marketing-hero-banner" class="bg-gradient-to-b from-blue-950 to-blue-900 text-white py-12 px-4 sm:px-6 lg:px-8 text-center shrink-0 border-b border-blue-950">
+        <div class="max-w-4xl mx-auto">
+            <span class="bg-blue-800 text-blue-100 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest">Global Sri Lankan Recruitment Matrix</span>
+            <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight mt-3 text-white">Cross-Border B2B Job Order Synchronization</h1>
+            <p class="text-xs sm:text-sm text-blue-100/80 max-w-2xl mx-auto mt-2 font-medium">Bridging International Foreign Employers directly with Verified Local Sri Lankan Licensed Foreign Employment Agencies.</p>
+            <div class="mt-6 flex flex-wrap justify-center gap-3">
+                <button onclick="toggleAuthModal('signup')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-md transition-all">Register Your Corporation</button>
+                <button onclick="toggleAuthModal('login')" class="bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl border border-white/20 transition-all">Access Dashboard Portal</button>
+            </div>
+        </div>
+    </section>
+
+    <main class="flex-1 overflow-y-auto lg:overflow-hidden bg-gray-50 main-container relative flex flex-col lg:flex-row">
+        
+        <aside id="dashboard-sidebar" class="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 p-4 shrink-0 overflow-y-auto">
+            <div class="space-y-1" id="sidebar-navigation-links">
+                </div>
+        </aside>
+
+        <div class="flex-1 lg:overflow-y-auto p-4 sm:p-6 w-full relative">
+
+            <div id="view-home" class="view-section max-w-7xl mx-auto space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-xs">
+                        <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-900 flex items-center justify-center mb-4 text-lg"><i class="fa-solid fa-building-shield"></i></div>
+                        <h3 class="text-base font-bold text-gray-900">Are You an International Employer?</h3>
+                        <p class="text-xs text-gray-500 mt-1 leading-relaxed">Publish your bulk global vacancy requests, allocate currency criteria matrix rules, and select targeted sourcing workflows transparently.</p>
+                        <button onclick="toggleAuthModal('signup')" class="mt-4 text-xs font-bold text-blue-900 hover:text-blue-800 flex items-center space-x-1"><span>Get Started</span> <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-xs">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-900 flex items-center justify-center mb-4 text-lg"><i class="fa-solid fa-id-card-clip"></i></div>
+                        <h3 class="text-base font-bold text-gray-900">Are You a Licensed SLBFE Agent?</h3>
+                        <p class="text-xs text-gray-500 mt-1 leading-relaxed">Gain immediate compliance matching access directly to authentic verified primary hiring orders, manage local sourcing data, and secure target pipeline items.</p>
+                        <button onclick="toggleAuthModal('signup')" class="mt-4 text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center space-x-1"><span>Register Agency</span> <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
                     </div>
                 </div>
+            </div>
 
-<div class="flex-1 w-full px-4 sm:px-6 py-6 lg:py-3 flex flex-col justify-center bg-white lg:overflow-hidden">
-                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-center text-black mb-4 lg:mb-2">B2B Ecosystem With Due Diligence</h2>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-5xl mx-auto w-full items-stretch">
-                        <div class="bg-gray-50 p-4 sm:p-5 rounded-xl border-t border-x border-blue-400 border-b-4 border-b-blue-900 shadow-md flex flex-col justify-between">
-                            <div class="text-center w-full mb-2">
-                                <h3 class="text-base sm:text-lg lg:text-xl font-bold text-blue-900">Overseas Recruiting Companies</h3>
-                            </div>
-                            <ul class="pl-4 list-disc text-xs sm:text-sm font-bold text-gray-700 space-y-1 sm:space-y-1.5 my-2">
-                                <li>Post single or multiple or bulk vacancies</li>
-                                <li>Recieve Expressions of Interest directly from agents</li>
-                            </ul>
+            <div id="view-client" class="view-section hidden flex-1 lg:overflow-y-auto max-w-7xl mx-auto w-full py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
+                <div class="bg-white rounded-xl shadow-xs border border-gray-200 p-5 mb-6">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-4">
+                        <div>
+                            <span class="bg-blue-100 text-blue-800 text-[10px] font-semibold px-2.5 py-0.5 rounded uppercase tracking-wider">Client Workspace Portal</span>
+                            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mt-1" id="workspace-client-name">Employer Dashboard</h2>
+                            <div id="workspace-client-meta" class="text-xs text-gray-600 mt-2 font-medium space-y-1"></div>
                         </div>
-                        <div class="bg-gray-50 p-4 sm:p-5 rounded-xl border-t border-x border-blue-400 border-b-4 border-b-blue-900 shadow-md flex flex-col justify-between">
-                            <div class="text-center w-full mb-2">
-                                <h3 class="text-base sm:text-lg lg:text-xl font-bold text-blue-900">Sri Lankan Sourcing Agencies</h3>
+                        <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                            <button onclick="toggleEditProfile('client')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs px-4 py-2.5 rounded-lg border border-gray-300 flex items-center justify-center space-x-1.5">
+                                <i class="fa-solid fa-pen-to-square"></i> <span>Edit Employer Profile</span>
+                            </button>
+                            <button onclick="openJobOrderModal()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow flex items-center justify-center space-x-1.5 tracking-wide">
+                                <i class="fa-solid fa-plus"></i> <span>Post New Job Order</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="client-edit-form-container" class="hidden mt-4 pt-4 border-t border-gray-200 bg-gray-50 p-4 rounded-xl">
+                        <h4 class="font-bold text-sm text-gray-900 mb-3"><i class="fa-solid fa-user-gear text-blue-900 mr-2"></i>Modify Employer Corporate Profile Details</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Employer Name</label>
+                                <input type="text" id="editClientCompany" class="w-full border p-2 rounded bg-white">
                             </div>
-                            <ul class="pl-4 list-disc text-xs sm:text-sm font-bold text-gray-700 space-y-1 sm:space-y-1.5 my-2">
-                                <li>Access real-time verified international job vacancies</li>
-                                <li>Get connected with overseas employers directly</li>
-                            </ul>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Employer City</label>
+                                <input type="text" id="editClientCity" class="w-full border p-2 rounded bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Employer Country</label>
+                                <input type="text" id="editClientCountry" class="w-full border p-2 rounded bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Corporate Phone</label>
+                                <input type="text" id="editClientPhone" class="w-full border p-2 rounded bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Employer Mobile Number</label>
+                                <input type="text" id="editClientMobile" class="w-full border p-2 rounded bg-white">
+                            </div>
+                        </div>
+                        <div class="mt-4 flex justify-end space-x-2">
+                            <button onclick="toggleEditProfile('client')" class="px-3 py-1.5 bg-gray-200 text-gray-700 font-bold rounded text-xs">Cancel</button>
+                            <button onclick="saveProfileChanges('client')" class="px-4 py-1.5 bg-blue-900 text-white font-bold rounded text-xs shadow">Save Settings</button>
                         </div>
                     </div>
                 </div>
-           </div>
 
-<div id="view-client" class="view-section hidden flex-1 lg:overflow-y-auto max-w-7xl mx-auto w-full py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
-    <div class="bg-white rounded-xl shadow-xs border border-gray-200 p-5 mb-6">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-4">
-            <div>
-                <span class="bg-blue-100 text-blue-800 text-[10px] font-semibold px-2.5 py-0.5 rounded uppercase tracking-wider">Client Workspace Portal</span>
-                <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mt-1" id="workspace-client-name">Employer Dashboard</h2>
-                <div id="workspace-client-meta" class="text-xs text-gray-600 mt-2 font-medium space-y-1"></div>
-            </div>
-            <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-                <button onclick="toggleEditProfile('client')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs px-4 py-2.5 rounded-lg border border-gray-300 flex items-center justify-center space-x-1.5">
-                    <i class="fa-solid fa-pen-to-square"></i> <span>Edit Employer Profile</span>
-                </button>
-                <button onclick="openJobOrderModal()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow flex items-center justify-center space-x-1.5 tracking-wide">
-                    <i class="fa-solid fa-plus"></i> <span>Post New Job Order</span>
-                </button>
-            </div>
-        </div>
+                <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6">
+                    <div class="bg-white p-4 rounded-xl shadow-xs border border-gray-200 flex flex-col justify-center">
+                        <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Your Total Job Orders</p>
+                        <p class="text-xl sm:text-2xl font-bold text-gray-900 mt-0.5" id="client-total-orders">0</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-xs border border-gray-200 flex flex-col justify-center">
+                        <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Total Active Vacancies</p>
+                        <p class="text-xl sm:text-2xl font-bold text-emerald-600 mt-0.5" id="client-active-vacancies">0</p>
+                    </div>
+                    <div class="hidden" id="client-pitches-count"></div>
+                </div>
 
-        <div id="client-edit-form-container" class="hidden mt-4 pt-4 border-t border-gray-200 bg-gray-50 p-4 rounded-xl">
-            <h4 class="font-bold text-sm text-gray-900 mb-3"><i class="fa-solid fa-user-gear text-blue-900 mr-2"></i>Modify Employer Corporate Profile Details</h4>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
-                <div>
-                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Employer Name</label>
-                    <input type="text" id="editClientCompany" class="w-full border p-2 rounded bg-white">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Employer City</label>
-                    <input type="text" id="editClientCity" class="w-full border p-2 rounded bg-white">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Employer Country</label>
-                    <input type="text" id="editClientCountry" class="w-full border p-2 rounded bg-white">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Corporate Phone</label>
-                    <input type="text" id="editClientPhone" class="w-full border p-2 rounded bg-white">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Employer Mobile Number</label>
-                    <input type="text" id="editClientMobile" class="w-full border p-2 rounded bg-white">
+                <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-3">Your Job Orders</h3>
+                <div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
+                    <div class="overflow-x-auto w-full">
+                        <table class="w-full text-left border-collapse whitespace-nowrap min-w-[600px]">
+                            <thead>
+                                <tr class="bg-gray-50 border-b border-gray-200 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-gray-500">
+                                    <th class="p-3 pl-4">Job Reference Number</th>
+                                    <th class="p-3">Posting Date</th>
+                                    <th class="p-3 text-center">Total Quantity Needed</th>
+                                    <th class="p-3">Deadline</th>
+                                    <th class="p-3 text-center">Specifications Sheet</th>
+                                    <th class="p-3">Interested Agencies</th>
+                                    <th class="p-3">Workflow Status</th>
+                                    <th class="p-3 pr-4 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="client-job-table" class="divide-y divide-gray-100 text-xs"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-            <div class="mt-4 flex justify-end space-x-2">
-                <button onclick="toggleEditProfile('client')" class="px-3 py-1.5 bg-gray-200 text-gray-700 font-bold rounded text-xs">Cancel</button>
-                <button onclick="saveProfileChanges('client')" class="px-4 py-1.5 bg-blue-900 text-white font-bold rounded text-xs shadow">Save Settings</button>
-            </div>
-        </div>
-    </div>
 
-    <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6">
-        <div class="bg-white p-4 rounded-xl shadow-xs border border-gray-200 flex flex-col justify-center">
-            <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Your Total Job Orders</p>
-            <p class="text-xl sm:text-2xl font-bold text-gray-900 mt-0.5" id="client-total-orders">0</p>
+            <div id="view-agency" class="view-section hidden max-w-7xl mx-auto space-y-6">
+                <div class="bg-white rounded-xl shadow-xs border border-gray-200 p-5">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-4">
+                        <div>
+                            <span class="bg-emerald-100 text-emerald-800 text-[10px] font-semibold px-2.5 py-0.5 rounded uppercase tracking-wider">Agency Operations Hub</span>
+                            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mt-1" id="workspace-agency-name">Recruitment Agency Dashboard</h2>
+                            <div id="workspace-agency-meta" class="text-xs text-gray-600 mt-2 font-medium space-y-1"></div>
+                        </div>
+                        <button onclick="toggleEditProfile('agency')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs px-4 py-2.5 rounded-lg border border-gray-300 flex items-center justify-center space-x-1.5 self-start md:self-auto">
+                            <i class="fa-solid fa-user-shield"></i> <span>Edit Agency License Card</span>
+                        </button>
+                    </div>
+
+                    <div id="agency-edit-form-container" class="hidden mt-4 pt-4 border-t border-gray-200 bg-gray-50 p-4 rounded-xl">
+                        <h4 class="font-bold text-sm text-gray-900 mb-3"><i class="fa-solid fa-shield-halved text-emerald-700 mr-2"></i>Modify Recruitment Agency Corporate Record Details</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Agency Brand Name</label>
+                                <input type="text" id="editAgencyName" class="w-full border p-2 rounded bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">SLBFE Official License Number</label>
+                                <input type="text" id="editAgencyLicense" class="w-full border p-2 rounded bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Corporate Contact Phone</label>
+                                <input type="text" id="editAgencyPhone" class="w-full border p-2 rounded bg-white">
+                            </div>
+                        </div>
+                        <div class="mt-4 flex justify-end space-x-2">
+                            <button onclick="toggleEditProfile('agency')" class="px-3 py-1.5 bg-gray-200 text-gray-700 font-bold rounded text-xs">Cancel</button>
+                            <button onclick="saveProfileChanges('agency')" class="px-4 py-1.5 bg-emerald-700 text-white font-bold rounded text-xs shadow">Save Structural Settings</button>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-2">Available International Job Orders Feed</h3>
+                <div id="agency-feed-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </div>
+
         </div>
-        <div class="bg-white p-4 rounded-xl shadow-xs border border-gray-200 flex flex-col justify-center">
-            <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Total Active Vacancies</p>
-            <p class="text-xl sm:text-2xl font-bold text-emerald-600 mt-0.5" id="client-active-vacancies">0</p>
-        </div>
-        <div class="hidden" id="client-pitches-count"></div>
-    </div>
+    </main>
 
     <div id="jobModal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-white rounded-xl shadow-xl border border-gray-200 w-full max-w-4xl max-h-[90vh] flex flex-col animate-in fade-in zoom-in-95 duration-200">
+        <div class="bg-white rounded-xl shadow-xl border border-gray-200 w-full max-w-4xl max-h-[90vh] flex flex-col scale-100 transition-transform">
             <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-xl">
                 <div>
                     <h3 class="text-lg font-bold text-gray-900">Create Bulk Job Order Request</h3>
-                    <p class="text-xs text-gray-500 mt-0.5">Define your target hiring location, global execution timeline, and specify multi-line item jobs.</p>
+                    <p class="text-xs text-gray-500 mt-0.5">Define targeted locations, project timeline parameters, and construct itemized jobs.</p>
                 </div>
                 <button onclick="closeModal('jobModal')" class="text-gray-400 hover:text-gray-600 text-lg p-1"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
             <div class="p-6 overflow-y-auto flex-1 space-y-6">
-                <div class="bg-blue-50/50 border border-blue-100 rounded-xl p-4">
+                <div class="bg-blue-50/60 border border-blue-100 rounded-xl p-4">
                     <h4 class="text-xs font-bold uppercase text-blue-900 tracking-wider mb-3"><i class="fa-solid fa-earth-americas mr-1.5"></i>Global Project Configuration Parameters</h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[11px] font-bold text-gray-700 uppercase mb-1">1. Work Country <span class="text-red-500">*</span></label>
-                            <select id="commonWorkCountry" class="w-full border border-gray-300 p-2.5 rounded-lg bg-white text-xs shadow-xs focus:ring-1 focus:ring-blue-900 focus:border-blue-900">
+                            <select id="commonWorkCountry" class="w-full border border-gray-300 p-2.5 rounded-lg bg-white text-xs shadow-xs focus:ring-1 focus:ring-blue-900">
                                 <option value="" selected disabled>Select Country</option>
                                 <option value="Australia">Australia</option>
                                 <option value="Bahrain">Bahrain</option>
@@ -227,7 +277,7 @@
                         </div>
                         <div>
                             <label class="block text-[11px] font-bold text-gray-700 uppercase mb-1">2. Project Deadline <span class="text-red-500">*</span></label>
-                            <input type="date" id="commonProjectDeadline" class="w-full border border-gray-300 p-2.5 rounded-lg bg-white text-xs shadow-xs focus:ring-1 focus:ring-blue-900 focus:border-blue-900">
+                            <input type="date" id="commonProjectDeadline" class="w-full border border-gray-300 p-2.5 rounded-lg bg-white text-xs shadow-xs focus:ring-1 focus:ring-blue-900">
                         </div>
                     </div>
                 </div>
@@ -238,7 +288,7 @@
                     </button>
                 </div>
 
-                <div id="dynamicLineItemForm" class="hidden bg-white border border-gray-200 rounded-xl p-5 shadow-xs animate-in fade-in slide-in-from-top-4 duration-200">
+                <div id="dynamicLineItemForm" class="hidden bg-white border border-gray-200 rounded-xl p-5 shadow-xs transition-all">
                     <div class="border-b border-gray-100 pb-2 mb-4 flex justify-between items-center">
                         <h5 class="text-xs font-bold uppercase text-gray-800 tracking-wider">Configure Line Item Specifications</h5>
                         <button type="button" onclick="hideLineItemForm()" class="text-xs text-gray-400 hover:text-red-600"><i class="fa-solid fa-trash-can mr-1"></i>Discard Form</button>
@@ -354,13 +404,12 @@
                                     <th class="p-2.5 text-center">Qty</th>
                                     <th class="p-2.5">Remuneration Package</th>
                                     <th class="p-2.5 text-center">Hours / Days</th>
-                                    <th class="p-2.5 text-center">Perks Matrix (9-14)</th>
                                     <th class="p-2.5 text-center pr-4">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="staged-line-items-tbody" class="divide-y divide-gray-100 bg-white text-[11px]">
                                 <tr id="empty-stage-row">
-                                    <td colspan="7" class="p-8 text-center text-gray-400 italic font-medium">No requirements added to line items list yet. Fill fields configuration above and select 'Add To List'.</td>
+                                    <td colspan="6" class="p-8 text-center text-gray-400 italic font-medium">No requirements added to line items list yet. Fill configuration above and select 'Add To List'.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -377,1603 +426,587 @@
         </div>
     </div>
 
-    <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-3">Your Job Orders</h3>
-    <div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
-        <div class="overflow-x-auto w-full">
-            <table class="w-full text-left border-collapse whitespace-nowrap min-w-[600px]">
-                <thead>
-                    <tr class="bg-gray-50 border-b border-gray-200 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-gray-500">
-                        <th class="p-3 pl-4">Job Reference Number</th>
-                        <th class="p-3">Posting Date</th>
-                        <th class="p-3 text-center">Total Quantity Needed</th>
-                        <th class="p-3">Deadline</th>
-                        <th class="p-3 text-center">Specifications Sheet</th>
-                        <th class="p-3">Interested Agencies</th>
-                        <th class="p-3">Workflow Status</th>
-                        <th class="p-3 pr-4 text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="client-job-table" class="divide-y divide-gray-100 text-xs">
-                    </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<div id="viewSpecsSheetModal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white rounded-xl shadow-xl border border-gray-200 w-full max-w-4xl max-h-[90vh] flex flex-col">
-        <div class="px-6 py-4 border-b border-gray-100 bg-gray-900 text-white rounded-t-xl flex justify-between items-center">
-            <div>
-                <div class="flex items-center space-x-2">
-                    <span class="text-xs font-mono uppercase bg-blue-800 text-blue-200 px-2 py-0.5 rounded font-bold" id="lblSheetRefNo">CONNECT-XXXX</span>
-                    <h3 class="text-base font-bold">Uneditable Manifest Specifications Sheet</h3>
+    <div id="viewSpecsSheetModal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-xl shadow-xl border border-gray-200 w-full max-w-4xl max-h-[90vh] flex flex-col">
+            <div class="px-6 py-4 border-b border-gray-100 bg-gray-900 text-white rounded-t-xl flex justify-between items-center">
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs font-mono uppercase bg-blue-800 text-blue-200 px-2 py-0.5 rounded font-bold" id="lblSheetRefNo">CONNECT-XXXX</span>
+                        <h3 class="text-base font-bold">Uneditable Manifest Specifications Sheet</h3>
+                    </div>
+                    <p class="text-[11px] text-gray-300 mt-0.5">Historical data compliance log review sheet</p>
                 </div>
-                <p class="text-[11px] text-gray-300 mt-0.5">Historical verification view for corporate workflow execution requirements</p>
+                <button onclick="closeModal('viewSpecsSheetModal')" class="text-gray-400 hover:text-white text-lg p-1"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <button onclick="closeModal('viewSpecsSheetModal')" class="text-gray-400 hover:text-white text-lg p-1"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="p-6 overflow-y-auto flex-1 space-y-4 text-xs" id="specsSheetRenderContainer">
+            <div class="p-6 overflow-y-auto flex-1 space-y-6" id="specsSheetRenderContainer"></div>
+            <div class="px-6 py-3 border-t border-gray-100 bg-gray-50 flex justify-end rounded-b-xl">
+                <button onclick="closeModal('viewSpecsSheetModal')" class="px-4 py-1.5 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded text-xs">Close Manifest View</button>
             </div>
-        <div class="px-6 py-3 border-t border-gray-100 bg-gray-50 flex justify-end rounded-b-xl">
-            <button onclick="closeModal('viewSpecsSheetModal')" class="px-4 py-1.5 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded text-xs">Close Manifest View</button>
         </div>
     </div>
-</div>
+
+    <div id="auth-modal" class="hidden fixed inset-0 z-50 bg-gray-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-gray-200 overflow-hidden flex flex-col">
+            <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                <div>
+                    <h3 id="auth-modal-title" class="text-base font-bold text-gray-900">Sign Up Workspace Portal</h3>
+                    <p id="auth-modal-subtitle" class="text-[11px] text-gray-500 mt-0.5">Initialize secure platform credentials access mapping log</p>
+                </div>
+                <button onclick="toggleAuthModal(null)" class="text-gray-400 hover:text-gray-600 p-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
             
-            <div id="view-agent" class="view-section hidden flex-1 lg:overflow-y-auto max-w-7xl mx-auto w-full py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
-                <div class="bg-white border border-gray-200 rounded-xl p-5 mb-6 shadow-xs">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-4">
-                        <div>
-                            <span class="bg-emerald-100 text-emerald-800 text-[10px] font-semibold px-2.5 py-0.5 rounded uppercase tracking-wider">Agency Workspace Portal</span>
-                            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mt-1" id="workspace-agent-name">Agency Dashboard</h2>
-                            <div id="workspace-agent-meta" class="text-xs text-gray-600 mt-2 font-medium space-y-1"></div>
-                        </div>
-                        <button onclick="toggleEditProfile('agent')" class="w-full md:w-auto bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs px-4 py-2.5 rounded-lg border border-gray-300 flex items-center justify-center space-x-1.5">
-                            <i class="fa-solid fa-id-card-clip"></i> <span>Edit Agency Profile</span>
-                        </button>
-                    </div>
-
-                    <div id="agent-edit-form-container" class="hidden mt-4 pt-4 border-t border-gray-200 bg-gray-50 p-4 rounded-xl">
-                        <h4 class="font-bold text-sm text-gray-900 mb-3"><i class="fa-solid fa-address-card text-emerald-700 mr-2"></i>Modify Registered Agency Core Metadata</h4>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Agency Name</label>
-                                <input type="text" id="editAgentName" class="w-full border p-2 rounded bg-white">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">SLBFE License Number</label>
-                                <input type="text" id="editAgentLicense" class="w-full border p-2 rounded bg-white">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Agency City</label>
-                                <input type="text" id="editAgentCity" class="w-full border p-2 rounded bg-white">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Agency Mobile Number</label>
-                                <input type="text" id="editAgentMobile" class="w-full border p-2 rounded bg-white">
-                            </div>
-                        </div>
-                        <div class="mt-4 flex justify-end space-x-2">
-                            <button onclick="toggleEditProfile('agent')" class="px-3 py-1.5 bg-gray-200 text-gray-700 font-bold rounded text-xs">Cancel</button>
-                            <button onclick="saveProfileChanges('agent')" class="px-4 py-1.5 bg-emerald-600 text-white font-bold rounded text-xs shadow">Update Core Data</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="agency-status-banner" class="mb-6 p-3.5 rounded-lg text-xs shadow-xs"></div>
-
-                <div class="border-b border-gray-200 mb-4">
-                    <h3 class="text-base sm:text-lg font-bold text-gray-900 pb-1.5">Current Open Jobs</h3>
-                </div>
-                <div id="agent-marketplace-feed" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            <div class="grid grid-cols-2 border-b border-gray-100 text-xs font-bold text-center" id="auth-tabs-panel">
+                <button id="tab-login" onclick="switchAuthMode('login')" class="py-3 border-b-2 text-gray-400 border-transparent">LOG IN</button>
+                <button id="tab-signup" onclick="switchAuthMode('signup')" class="py-3 border-b-2 text-blue-900 border-blue-900 bg-blue-50/30">SIGN UP</button>
             </div>
 
-            <div id="view-admin" class="view-section hidden flex-1 lg:overflow-y-auto max-w-7xl mx-auto w-full py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
-                <div class="mb-6 border-b border-gray-100 pb-3">
-                    <span class="bg-purple-100 text-purple-800 text-[10px] font-semibold px-2.5 py-0.5 rounded uppercase tracking-wider">Admin Workspace Portal</span>
-                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mt-1">Master Database</h2>
-                </div>
-
-                <div class="space-y-6">
-                    <div class="bg-white p-4 rounded-xl shadow-xs border border-gray-200">
-                        <h3 class="text-sm sm:text-base font-bold text-gray-900 mb-3 flex items-center"><i class="fa-solid fa-list-check text-purple-600 mr-2"></i>Job Router</h3>
-                        <div class="overflow-x-auto rounded-lg border border-gray-100">
-                            <table class="w-full text-left border-collapse text-xs min-w-[600px]">
-                                <thead>
-                                    <tr class="bg-gray-50 border-b border-gray-200 text-[10px] font-bold uppercase tracking-wider text-gray-500">
-                                        <th class="p-3">Job Title</th><th class="p-3">Employer Name</th><th class="p-3">Employer Country</th><th class="p-3">Job Status</th><th class="p-3">Delete Request</th><th class="p-3 text-right">Action Controls</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="admin-job-table" class="divide-y divide-gray-100"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-4 rounded-xl shadow-xs border border-gray-200">
-                        <h3 class="text-sm sm:text-base font-bold text-gray-900 mb-3 flex items-center"><i class="fa-solid fa-building text-purple-600 mr-2"></i>Employer Master List</h3>
-                        <div class="overflow-x-auto rounded-lg border border-gray-100">
-                            <table class="w-full text-left border-collapse text-xs min-w-[700px]">
-                                <thead>
-                                    <tr class="bg-gray-50 border-b border-gray-200 text-[10px] font-bold uppercase tracking-wider text-gray-500">
-                                        <th class="p-3">Employer Name</th><th class="p-3">Employer Email</th><th class="p-3">Employer Location</th><th class="p-3">Employer Landline</th><th class="p-3">Employer Mobile Number</th><th class="p-3 text-right">Action Controls</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="admin-employers-table" class="divide-y divide-gray-100"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-4 rounded-xl shadow-xs border border-gray-200">
-                        <h3 class="text-sm sm:text-base font-bold text-gray-900 mb-3 flex items-center"><i class="fa-solid fa-shield-halved text-purple-600 mr-2"></i>Agency Master List</h3>
-                        <div class="overflow-x-auto rounded-lg border border-gray-100">
-                            <table class="w-full text-left border-collapse text-xs min-w-[800px]">
-                                <thead>
-                                    <tr class="bg-gray-50 border-b border-gray-200 text-[10px] font-bold uppercase tracking-wider text-gray-500">
-                                        <th class="p-3">Agency Name</th><th class="p-3">SLBFE License Number</th><th class="p-3">Agency Email</th><th class="p-3">Agency Location</th><th class="p-3">Agency Mobile Number</th><th class="p-3">Approval Status</th><th class="p-3 text-right">Action Controls</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="admin-agencies-table" class="divide-y divide-gray-100"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-4 rounded-xl shadow-xs border border-gray-200">
-                        <h3 class="text-sm sm:text-base font-bold text-gray-900 mb-3 flex items-center"><i class="fa-solid fa-envelope-open-text text-purple-600 mr-2"></i>Agency EOI</h3>
-                        <div class="overflow-x-auto rounded-lg border border-gray-100">
-                            <table class="w-full text-left border-collapse text-xs min-w-[850px]">
-                                <thead>
-                                    <tr class="bg-gray-50 border-b border-gray-200 text-[10px] font-bold uppercase tracking-wider text-gray-500">
-                                        <th class="p-3">Job Title</th>
-                                        <th class="p-3">Employer Country</th>
-                                        <th class="p-3">Vacancies Required</th>
-                                        <th class="p-3">Monthly Package</th>
-                                        <th class="p-3">Agency Name</th>
-                                        <th class="p-3">SLBFE License Number</th>
-                                        <th class="p-3 text-right">Action Controls</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="admin-pitches-table" class="divide-y divide-gray-100"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-<footer id="public-footer" class="bg-blue-950 h-10 border-t border-indigo-900 shrink-0 z-50">
-</footer>        
-    <div id="clientSignupModal" class="fixed inset-0 bg-black/60 hidden z-50 items-center justify-center p-2 backdrop-blur-xs">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden flex flex-col mx-auto my-auto max-h-[95vh]">
-            <div class="bg-blue-900 text-white p-3 flex justify-between items-center shrink-0">
-                <h3 class="font-bold text-xs sm:text-sm tracking-wide"><i class="fa-solid fa-building-user mr-2"></i>Employer Onboarding</h3>
-                <button onclick="closeModal('clientSignupModal')" class="text-blue-200 hover:text-white text-xl font-semibold leading-none">&times;</button>
-            </div>
-            <form id="clientSignupForm" onsubmit="handleClientSignup(event)" class="p-3 space-y-2 text-xs overflow-y-auto">
+            <form id="frmAuthWorkflow" onsubmit="handleAuthFormSubmission(event)" class="p-5 space-y-4 flex-1 overflow-y-auto max-h-[70vh]">
                 <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Employer Name</label>
-                    <input type="text" id="signupCompanyName" required placeholder="" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Employer City</label>
-                        <input type="text" id="signupCity" required placeholder="" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Employer Country</label>
-                        <select id="signupCountry" required class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
-                            <option value="" disabled selected>Select Country</option>
-                            <option value="Australia">Australia</option>
-                            <option value="Bahrain">Bahrain</option>
-                            <option value="Canada">Canada</option>
-                            <option value="China">China</option>
-                            <option value="France">France</option>
-                            <option value="Germany">Germany</option>
-                            <option value="Hongkong">Hongkong</option>
-                            <option value="India">India</option>
-                            <option value="Israel">Israel</option>
-                            <option value="Italy">Italy</option>
-                            <option value="Kuwait">Kuwait</option>
-                            <option value="Malaysia">Malaysia</option>
-                            <option value="Oman">Oman</option>
-                            <option value="Poland">Poland</option>
-                            <option value="Qatar">Qatar</option>
-                            <option value="Romania">Romania</option>
-                            <option value="Russia">Russia</option>
-                            <option value="Saudi Arabia">Saudi Arabia</option>
-                            <option value="Serbia">Serbia</option>
-                            <option value="Singapore">Singapore</option>
-                            <option value="UK">UK</option>
-                            <option value="United Arab Emirates">United Arab Emirates</option>
-                            <option value="USA">USA</option>
-                        </select>
-                    </div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Email Coordinates</label>
+                    <input type="email" id="authEmail" required placeholder="name@corporation.com" class="w-full border border-gray-300 p-2.5 rounded-lg text-sm focus:ring-1 focus:ring-blue-900">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Employer Email</label>
-                    <input type="email" id="signupEmail" required placeholder="" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Secure Password</label>
+                    <input type="password" id="authPassword" required minlength="6" placeholder="••••••••" class="w-full border border-gray-300 p-2.5 rounded-lg text-sm focus:ring-1 focus:ring-blue-900">
                 </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Secure Password</label>
-                    <input type="password" id="signupPassword" required placeholder="********" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
-                </div>
-                <div class="grid grid-cols-3 gap-2">
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Country Code</label>
-                        <select id="signupPhoneCode" required class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50 font-mono text-[11px]">
-                            <option value="" disabled selected>Select Country</option>
-                            <option value="+61">Australia (+61)</option>
-                            <option value="+973">Bahrain (+973)</option>
-                            <option value="+1">Canada (+1)</option>
-                            <option value="+86">China (+86)</option>
-                            <option value="+33">France (+33)</option>
-                            <option value="+49">Germany (+49)</option>
-                            <option value="+852">Hongkong (+852)</option>
-                            <option value="+91">India (+91)</option>
-                            <option value="+972">Israel (+972)</option>
-                            <option value="+39">Italy (+39)</option>
-                            <option value="+965">Kuwait (+965)</option>
-                            <option value="+60">Malaysia (+60)</option>
-                            <option value="+968">Oman (+968)</option>
-                            <option value="+48">Poland (+48)</option>
-                            <option value="+974">Qatar (+974)</option>
-                            <option value="+40">Romania (+40)</option>
-                            <option value="+7">Russia (+7)</option>
-                            <option value="+966">Saudi Arabia (+966)</option>
-                            <option value="+381">Serbia (+381)</option>
-                            <option value="+65">Singapore (+65)</option>
-                            <option value="+44">UK (+44)</option>
-                            <option value="+971">United Arab Emirates (+971)</option>
-                            <option value="+1">USA (+1)</option>
+
+                <div id="signup-metadata-extension-fields" class="space-y-4 pt-2">
+                    <div class="border-t border-gray-100 pt-3">
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Account Operational Domain Matrix</label>
+                        <select id="authRole" onchange="adaptSignupFormContextLabels(this.value)" class="w-full border border-gray-300 p-2.5 rounded-lg text-sm bg-white font-medium">
+                            <option value="client">International Employer (Foreign Principal)</option>
+                            <option value="agency">Sri Lankan Licensed Recruitment Agency</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Employer Landline</label>
-                        <input type="tel" id="signupPhone" required placeholder="" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
+                        <label id="lblMetaCompanyName" class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Corporate Entity Name</label>
+                        <input type="text" id="authMetaCompanyName" placeholder="e.g. Al-Nasser Holdings Ltd" class="w-full border border-gray-300 p-2.5 rounded-lg text-sm focus:ring-1 focus:ring-blue-900">
                     </div>
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Ext</label>
-                        <input type="text" id="signupExt" placeholder="" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
-                    </div>
-                </div>
-                <div class="grid grid-cols-3 gap-2">
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Country Code</label>
-                        <select id="signupMobileCode" required class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50 font-mono text-[11px]">
-                            <option value="" disabled selected>Select Country</option>
-                            <option value="+61">Australia (+61)</option>
-                            <option value="+973">Bahrain (+973)</option>
-                            <option value="+86">China (+86)</option>
-                            <option value="+33">France (+33)</option>
-                            <option value="+49">Germany (+49)</option>
-                            <option value="+852">Hongkong (+852)</option>
-                            <option value="+91">India (+91)</option>
-                            <option value="+972">Israel (+972)</option>
-                            <option value="+39">Italy (+39)</option>
-                            <option value="+965">Kuwait (+965)</option>
-                            <option value="+60">Malaysia (+60)</option>
-                            <option value="+968">Oman (+968)</option>
-                            <option value="+48">Poland (+48)</option>
-                            <option value="+974">Qatar (+974)</option>
-                            <option value="+40">Romania (+40)</option>
-                            <option value="+7">Russia (+7)</option>
-                            <option value="+966">Saudi Arabia (+966)</option>
-                            <option value="+381">Serbia (+381)</option>
-                            <option value="+65">Singapore (+65)</option>
-                            <option value="+44">UK (+44)</option>
-                            <option value="+971">United Arab Emirates (+971)</option>
-                            <option value="+1">USA/Canada (+1)</option>
-                        </select>
-                    </div>
-                    <div class="col-span-2">
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Employer Mobile Number</label>
-                        <input type="tel" id="signupMobile" required placeholder="" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
+                    <div id="wrapperMetaLicenseField" class="hidden">
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">SLBFE Official License Identity Number</label>
+                        <input type="text" id="authMetaLicenseNumber" placeholder="e.g. SLBFE-LIC-XXXX" class="w-full border border-gray-300 p-2.5 rounded-lg text-sm focus:ring-1 focus:ring-emerald-700">
                     </div>
                 </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Number of Current Employees</label>
-                    <input type="number" id="signupEmployees" required placeholder="" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
-                </div>
-                <div class="flex justify-end space-x-2 pt-1.5 border-t border-gray-100 shrink-0">
-                    <button type="button" onclick="closeModal('clientSignupModal')" class="px-3 py-1.5 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 text-[11px] font-bold">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow">Onboard Employer</button>
-                </div>
+
+                <button type="submit" id="btnAuthSubmitTrigger" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs uppercase tracking-wider py-3 rounded-lg shadow mt-2 transition-all">Submit Authentication request</button>
             </form>
         </div>
     </div>
 
-    <div id="agentSignupModal" class="fixed inset-0 bg-black/60 hidden z-50 items-center justify-center p-2 backdrop-blur-xs">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden flex flex-col mx-auto my-auto max-h-[95vh]">
-            <div class="bg-blue-900 text-white p-3 flex justify-between items-center shrink-0">
-                <h3 class="font-bold text-xs sm:text-sm tracking-wide"><i class="fa-solid fa-building-user mr-2"></i>Agency Onboarding</h3>
-                <button onclick="closeModal('agentSignupModal')" class="text-blue-200 hover:text-white text-xl font-semibold leading-none">&times;</button>
-            </div>
-            <form id="agentSignupForm" onsubmit="handleAgentSignup(event)" class="p-3 space-y-2 text-xs overflow-y-auto">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Agency Name</label>
-                    <input type="text" id="agentSignupName" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">SLBFE License Number</label>
-                    <input type="text" id="agentSignupLicense" required maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="XXXX" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Agency City</label>
-                    <input type="text" id="agentSignupCity" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Agency Email</label>
-                    <input type="email" id="agentSignupEmail" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Secure Password</label>
-                    <input type="password" id="agentSignupPassword" required placeholder="********" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-                    <div class="sm:col-span-1">
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Country Code</label>
-                        <select id="agentSignupMobileCode" required class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-100 cursor-not-allowed pointer-events-none">
-                            <option value="+94" selected>+94 (SL)</option>
-                        </select>
-                    </div>
-                    <div class="sm:col-span-2">
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Agency Mobile Number</label>
-                        <input type="text" id="agentSignupMobile" required maxlength="9" minlength="9" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                    </div>
-                </div>
-                <div class="flex justify-end space-x-2 pt-2 border-t border-gray-100 shrink-0">
-                    <button type="button" onclick="closeModal('agentSignupModal')" class="px-3.5 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-xs font-bold">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow">Onboard Agency</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="clientLoginModal" class="fixed inset-0 bg-black/60 hidden z-50 items-center justify-center p-3 sm:p-4 backdrop-blur-xs">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden flex flex-col mx-auto">
-            <div class="bg-blue-900 text-white p-4 flex justify-between items-center">
-                <h3 class="font-bold text-sm sm:text-base tracking-wide">Employer Login Here</h3>
-                <button onclick="closeModal('clientLoginModal')" class="text-blue-200 hover:text-white text-2xl font-semibold leading-none">&times;</button>
-            </div>
-            <form id="clientLoginForm" onsubmit="executeLogin(event, 'client')" class="p-4 space-y-4 text-xs sm:text-sm">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Registered Employer Email</label>
-                    <input type="email" id="loginClientEmail" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Secure Password</label>
-                    <input type="password" id="loginClientPassword" required placeholder="********" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                </div>
-                  <p class="text-right mt-1">
-                    <a href="#" onclick="handleForgotPassword('client')" class="text-[11px] text-blue-700 hover:underline font-medium">Forgot Password?</a>
-                </p>
-                <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition shadow border-b-4 border-emerald-800 active:border-b-0 tracking-wider">
-                    Authenticate Employer Sign In
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <div id="agentLoginModal" class="fixed inset-0 bg-black/60 hidden z-50 items-center justify-center p-3 sm:p-4 backdrop-blur-xs">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden flex flex-col mx-auto">
-            <div class="bg-blue-900 text-white p-4 flex justify-between items-center">
-                <h3 class="font-bold text-sm sm:text-base tracking-wide">Agency Login Here</h3>
-                <button onclick="closeModal('agentLoginModal')" class="text-emerald-100 hover:text-white text-2xl font-semibold leading-none">&times;</button>
-            </div>
-            <form id="agentLoginForm" onsubmit="executeLogin(event, 'agent')" class="p-4 space-y-4 text-xs sm:text-sm">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Registered Agency Email</label>
-                    <input type="email" id="loginAgentEmail" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Secure Password</label>
-                    <input type="password" id="loginAgentPassword" required placeholder="********" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                </div>
-                <p class="text-right mt-1">
-                    <a href="#" onclick="handleForgotPassword('agent')" class="text-[11px] text-blue-700 hover:underline font-medium">Forgot Password?</a>
-                </p>
-                <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition shadow border-b-4 border-emerald-800 active:border-b-0 tracking-wider">
-                    Authenticate Agency Sign In
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <div id="jobModal" class="fixed inset-0 bg-black/60 hidden z-50 items-center justify-center p-3 backdrop-blur-xs">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden flex flex-col mx-auto max-h-[90vh]">
-            <div class="bg-blue-900 text-white p-4 flex justify-between items-center">
-                <h3 class="font-bold text-sm sm:text-base tracking-wide"><i class="fa-solid fa-file-invoice-dollar mr-2"></i>Job Order Details</h3>
-                <button onclick="closeModal('jobModal')" class="text-blue-200 hover:text-white text-2xl font-semibold leading-none">&times;</button>
-            </div>
-            <form id="jobForm" onsubmit="handleJobPost(event)" class="p-4 space-y-3.5 text-xs sm:text-sm overflow-y-auto">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Job Title</label>
-                    <input type="text" id="jobTitle" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Employer Country</label>
-                        <select id="jobCountry" required class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                            <option value="" disabled selected>Select Country</option>
-                            <option value="Australia">Australia</option>
-                            <option value="Bahrain">Bahrain</option>
-                            <option value="Canada">Canada</option>
-                            <option value="China">China</option>
-                            <option value="France">France</option>
-                            <option value="Germany">Germany</option>
-                            <option value="Hongkong">Hongkong</option>
-                            <option value="India">India</option>
-                            <option value="Israel">Israel</option>
-                            <option value="Italy">Italy</option>
-                            <option value="Kuwait">Kuwait</option>
-                            <option value="Malaysia">Malaysia</option>
-                            <option value="Oman">Oman</option>
-                            <option value="Poland">Poland</option>
-                            <option value="Qatar">Qatar</option>
-                            <option value="Romania">Romania</option>
-                            <option value="Russia">Russia</option>
-                            <option value="Saudi Arabia">Saudi Arabia</option>
-                            <option value="Serbia">Serbia</option>
-                            <option value="Singapore">Singapore</option>
-                            <option value="UK">UK</option>
-                            <option value="United Arab Emirates">United Arab Emirates</option>
-                            <option value="USA">USA</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Vacancy Count (Quota)</label>
-                        <input type="number" id="jobCount" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Gross Salary / Month</label>
-                        <input type="text" id="jobSalary" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Select Currency</label>
-                        <select id="jobCurrency" required class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                            <option value="" disabled selected>Select Currency</option>
-                            <option value="AUD">AUD (Australian Dollar)</option>
-                            <option value="BHD">BHD (Bahraini Dinar)</option>
-                            <option value="CAD">CAD (Canadian Dollar)</option>
-                            <option value="CNY">CNY (Chinese Yuan)</option>
-                            <option value="EUR">EUR (Euro)</option>
-                            <option value="GBP">GBP (British Pound)</option>
-                            <option value="HKD">HKD (Hong Kong Dollar)</option>
-                            <option value="ILS">ILS (Israeli New Shekel)</option>
-                            <option value="INR">INR (Indian Rupee)</option>
-                            <option value="KWD">KWD (Kuwaiti Dinar)</option>
-                            <option value="MYR">MYR (Malaysian Ringgit)</option>
-                            <option value="OMR">OMR (Omani Rial)</option>
-                            <option value="PLN">PLN (Polish Zloty)</option>
-                            <option value="QAR">QAR (Qatari Riyal)</option>
-                            <option value="RON">RON (Romanian Leu)</option>
-                            <option value="RUB">RUB (Russian Ruble)</option>
-                            <option value="SAR">SAR (Saudi Riyal)</option>
-                            <option value="RSD">RSD (Serbian Dinar)</option>
-                            <option value="SGD">SGD (Singapore Dollar)</option>
-                            <option value="AED">AED (UAE Dirham)</option>
-                            <option value="USD">USD (US Dollar)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <label class="font-bold text-gray-800 block text-xs">SLBFE Approval Mandate</label>
-                            <span class="text-[11px] text-gray-500 block">Select if this job requires mandatory SLBFE Approval?</span>
-                        </div>
-                        <input type="checkbox" id="jobSlbfe" class="w-4 h-4 text-blue-900 border-gray-300 rounded shrink-0 focus:ring-blue-500 ml-2">
-                    </div>
-                </div>
-                <div class="flex justify-end space-x-2 pt-2 border-t border-gray-100">
-                    <button type="button" onclick="closeModal('jobModal')" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-bold text-xs">Cancel</button>
-                    <button type="submit" class="px-5 py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-lg font-bold text-xs shadow tracking-wide">Publish Job Order</button>
-                </div>
-            </form>
-        </div>
+    <div id="app-toast" class="hidden fixed bottom-5 right-5 z-50 bg-gray-900 text-white text-xs px-4 py-3 rounded-xl shadow-xl flex items-center space-x-2 animate-bounce">
+        <i class="fa-solid fa-circle-info text-blue-400" id="toast-icon"></i>
+        <span id="toast-message" class="font-medium">Notification alert description standard.</span>
     </div>
 
     <script>
+        // Supabase Runtime Infrastructure Pointers Initializations
+        const SUPABASE_URL = "https://your-project-id.supabase.co"; 
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...your-key";
+        let supabase = null;
+        try {
+            if(typeof supabaseJs !== 'undefined') {
+                supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+        } catch(e) { console.warn("Supabase initialization sandbox mode fallback active.", e); }
+
+        // Local Memory Application Databases
+        let sessionUserRecord = null;
+        let globalJobOrderDatabase = [];
+        let stagedJobItems = [];
+        let internalReferenceSequence = 1001;
+        let activeAuthMode = 'signup'; 
+
         // ============================================================
-        // SUPABASE INITIALISATION
-        // Replace these two values with your own project credentials.
-        // Supabase Dashboard → Project Settings → API
+        // CORE ROUTING & VIEW CONTROLLER SYSTEMS
         // ============================================================
-        const SUPABASE_URL  = 'https://vnirzdrxzjasrumvezvz.supabase.co';
-        const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZuaXJ6ZHJ4emphc3J1bXZlenZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MjU5MzUsImV4cCI6MjA5NjQwMTkzNX0.53MwwAIRdmcKaZhxLsAWrrl8UzvteNRC7PEQPp_Z3nw';
-        const { createClient } = supabase;
-        const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
+        function navigateToSection(targetSectionId) {
+            document.querySelectorAll('.view-section').forEach(view => view.classList.add('hidden'));
+            const activeView = document.getElementById(`view-${targetSectionId}`);
+            if (activeView) activeView.classList.remove('hidden');
 
-        // ── TABLE MAP  (logical key → Supabase table name) ──────────
-        const TABLE = {
-            wconnect_employers: 'employers',
-            wconnect_agencies:  'agencies',
-            wconnect_jobs:      'jobs',
-            wconnect_pitches:   'pitches'
-        };
-
-        let sessionRole = 'landing';
-        let sessionUser = null;
-
-        // ── In-memory cache (replaces localStorage arrays) ───────────
-        let _cache = {
-            wconnect_employers: [],
-            wconnect_agencies:  [],
-            wconnect_jobs:      [],
-            wconnect_pitches:   []
-        };
-
-        // ── Helpers ──────────────────────────────────────────────────
-        function sanitize(str) {
-            if (str === null || str === undefined) return '';
-            const div = document.createElement('div');
-            div.appendChild(document.createTextNode(String(str)));
-            return div.innerHTML;
+            // Synchronize Sidebar Highlighting States
+            document.querySelectorAll('.sidebar-nav-link').forEach(link => {
+                link.classList.remove('bg-blue-50', 'text-blue-900', 'bg-emerald-50', 'text-emerald-900');
+            });
+            const targetedLink = document.getElementById(`sidebar-link-${targetSectionId}`);
+            if (targetedLink) {
+                const role = sessionUserRecord?.user_metadata?.role || 'client';
+                targetedLink.classList.add(role === 'agency' ? 'bg-emerald-50' : 'bg-blue-50', role === 'agency' ? 'text-emerald-900' : 'text-blue-900');
+            }
         }
 
-        function openModal(id) {
-            const modal = document.getElementById(id);
-            if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
+        // ============================================================
+        // AUTHENTICATION MODAL AND TAB TOGGLE LOGIC (FIXED & RESTORED)
+        // ============================================================
+        function toggleAuthModal(initialMode = null) {
+            const modal = document.getElementById('auth-modal');
+            if (!initialMode) {
+                modal.classList.add('hidden');
+                return;
+            }
+            modal.classList.remove('hidden');
+            switchAuthMode(initialMode);
         }
+
+        function switchAuthMode(mode) {
+            activeAuthMode = mode;
+            const tabLogin = document.getElementById('tab-login');
+            const tabSignup = document.getElementById('tab-signup');
+            const metaExtension = document.getElementById('signup-metadata-extension-fields');
+            const modalTitle = document.getElementById('auth-modal-title');
+            const modalSubtitle = document.getElementById('auth-modal-subtitle');
+            const submitBtn = document.getElementById('btnAuthSubmitTrigger');
+
+            // Reset Input Validation Classes
+            tabLogin.className = "py-3 border-b-2 text-center text-xs font-bold transition-all ";
+            tabSignup.className = "py-3 border-b-2 text-center text-xs font-bold transition-all ";
+
+            if (mode === 'login') {
+                tabLogin.classList.add('border-blue-900', 'text-blue-900', 'bg-blue-50/30');
+                tabSignup.classList.add('border-transparent', 'text-gray-400');
+                metaExtension.classList.add('hidden');
+                modalTitle.innerText = "Access Your Workspace Portal";
+                modalSubtitle.innerText = "Provide email credentials to restore your session logs";
+                submitBtn.innerText = "Secure Log In";
+                submitBtn.className = "w-full bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs uppercase tracking-wider py-3 rounded-lg shadow mt-2 transition-all";
+            } else {
+                tabSignup.classList.add('border-blue-900', 'text-blue-900', 'bg-blue-50/30');
+                tabLogin.classList.add('border-transparent', 'text-gray-400');
+                metaExtension.classList.remove('hidden');
+                modalTitle.innerText = "Create Corporate Account";
+                modalSubtitle.innerText = "Initialize secure credentials and allocate workspace domain maps";
+                submitBtn.innerText = "Register Corporation";
+                adaptSignupFormContextLabels(document.getElementById('authRole').value);
+            }
+        }
+
+        function adaptSignupFormContextLabels(chosenRole) {
+            const labelCompany = document.getElementById('lblMetaCompanyName');
+            const inputCompany = document.getElementById('authMetaCompanyName');
+            const licenseWrapper = document.getElementById('wrapperMetaLicenseField');
+            const licenseInput = document.getElementById('authMetaLicenseNumber');
+            const submitBtn = document.getElementById('btnAuthSubmitTrigger');
+
+            if (chosenRole === 'agency') {
+                labelCompany.innerText = "Recruitment Agency Brand Name";
+                inputCompany.placeholder = "e.g. Emerald Global Sourcing Ltd";
+                licenseWrapper.classList.remove('hidden');
+                licenseInput.required = true;
+                submitBtn.className = "w-full bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider py-3 rounded-lg shadow mt-2 transition-all";
+            } else {
+                labelCompany.innerText = "Employer Corporate Entity Name";
+                inputCompany.placeholder = "e.g. Al-Nasser Contracting Co.";
+                licenseWrapper.classList.add('hidden');
+                licenseInput.required = false;
+                submitBtn.className = "w-full bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs uppercase tracking-wider py-3 rounded-lg shadow mt-2 transition-all";
+            }
+        }
+
+        // ============================================================
+        // AUTHENTICATION BACKEND SIMULATION CORE ENDPOINTS
+        // ============================================================
+        function handleAuthFormSubmission(event) {
+            event.preventDefault();
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value;
+            
+            if (activeAuthMode === 'signup') {
+                const role = document.getElementById('authRole').value;
+                const company = document.getElementById('authMetaCompanyName').value.trim() || "Independent Entity";
+                const license = document.getElementById('authMetaLicenseNumber').value.trim();
+
+                sessionUserRecord = {
+                    email: email,
+                    user_metadata: { role: role, company_name: company, license_number: license }
+                };
+                showToastMessage(`Registration Account allocated for: ${company}`, "success");
+            } else {
+                // Mocking standard validation login parameters check
+                const guessedRole = email.includes('agency') ? 'agency' : 'client';
+                sessionUserRecord = {
+                    email: email,
+                    user_metadata: {
+                        role: guessedRole,
+                        company_name: guessedRole === 'agency' ? "Apex Recruitment Partners" : "Gulf Builders Consortium",
+                        license_number: "SLBFE-LIC-9982"
+                    }
+                };
+                showToastMessage("Workspace login access granted.", "success");
+            }
+
+            toggleAuthModal(null);
+            transformLayoutToAuthenticatedState();
+        }
+
+        function transformLayoutToAuthenticatedState() {
+            if (!sessionUserRecord) return;
+            
+            document.body.classList.add('is-logged-in');
+            document.getElementById('marketing-hero-banner').classList.add('hidden');
+            document.getElementById('guest-header-actions').classList.add('hidden');
+            document.getElementById('auth-header-actions').classList.remove('hidden');
+
+            const role = sessionUserRecord.user_metadata.role;
+            const company = sessionUserRecord.user_metadata.company_name;
+
+            document.getElementById('lblUserDisplayIdentity').innerText = company;
+            document.getElementById('user-avatar-badge').innerText = company.charAt(0).toUpperCase();
+            document.getElementById('user-avatar-badge').className = `w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs ${role === 'agency' ? 'bg-emerald-100 text-emerald-900' : 'bg-blue-100 text-blue-900'}`;
+
+            // Build Dynamic Navigation Panel Component Menu Elements
+            const sidebar = document.getElementById('dashboard-sidebar');
+            const navLinksContainer = document.getElementById('sidebar-navigation-links');
+            sidebar.classList.remove('hidden');
+
+            if (role === 'agency') {
+                navLinksContainer.innerHTML = `
+                    <button id="sidebar-link-agency" onclick="navigateToSection('agency')" class="sidebar-nav-link w-full flex items-center space-x-2 px-3 py-2 text-xs font-bold rounded-lg transition-all"><i class="fa-solid fa-briefcase text-sm"></i> <span>Agency Sourcing Hub</span></button>
+                `;
+                document.getElementById('workspace-agency-name').innerText = company;
+                document.getElementById('workspace-agency-meta').innerHTML = `<span>Official Registered License Identity: <strong>${sessionUserRecord.user_metadata.license_number}</strong></span>`;
+                navigateToSection('agency');
+            } else {
+                navLinksContainer.innerHTML = `
+                    <button id="sidebar-link-client" onclick="navigateToSection('client')" class="sidebar-nav-link w-full flex items-center space-x-2 px-3 py-2 text-xs font-bold rounded-lg transition-all"><i class="fa-solid fa-chart-pie text-sm"></i> <span>Employer Dashboard</span></button>
+                `;
+                document.getElementById('workspace-client-name').innerText = company;
+                document.getElementById('workspace-client-meta').innerHTML = `<span>Registered Corporate Account Reference Identity: <strong>${sessionUserRecord.email}</strong></span>`;
+                navigateToSection('client');
+            }
+            synchronizeSourcingFeedCollections();
+        }
+
+        function handleApplicationLogout() {
+            sessionUserRecord = null;
+            document.body.classList.remove('is-logged-in');
+            document.getElementById('dashboard-sidebar').classList.add('hidden');
+            document.getElementById('auth-header-actions').classList.add('hidden');
+            document.getElementById('guest-header-actions').classList.remove('hidden');
+            document.getElementById('marketing-hero-banner').classList.remove('hidden');
+            
+            // Clear runtime credential field elements form
+            document.getElementById('frmAuthWorkflow').reset();
+            navigateToSection('home');
+            showToastMessage("Workspace secure session log disconnected successfully.");
+        }
+
+        // ============================================================
+        // POST NEW MULTI-LINE JOB ORDER REQUEST ACTIONS & MODAL SYSTEM
+        // ============================================================
+        function openJobOrderModal() {
+            stagedJobItems = []; 
+            document.getElementById('commonWorkCountry').selectedIndex = 0;
+            document.getElementById('commonProjectDeadline').value = "";
+            document.getElementById('commonWorkCountry').disabled = false;
+            document.getElementById('commonProjectDeadline').disabled = false;
+            
+            renderStagedTable();
+            evaluatePublishButtonPresence();
+            hideLineItemForm();
+            
+            const modal = document.getElementById('jobModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
         function closeModal(id) {
             const modal = document.getElementById(id);
-            if (modal) { modal.classList.remove('flex'); modal.classList.add('hidden'); }
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }
 
-        // ── Admin login – passphrase checked via Supabase DB function ─
-        async function handleAdminLogin() {
-            const pass = prompt("Enter Admin Passphrase:");
-            if (pass === null) return;
-            const { data, error } = await _supabase.rpc('check_admin_passphrase', { input_pass: pass });
-            if (error) { alert("Admin verification error: " + error.message); return; }
-            if (data === true) { switchRole('admin'); }
-            else { alert("Access Denied: Invalid Admin Passphrase."); }
-        }
-
-        // ── Normalisers: snake_case → camelCase (NO password field) ──
-        function normaliseEmployer(row) {
-            return {
-                id:            row.id,
-                companyName:   row.company_name,
-                city:          row.city,
-                country:       row.country,
-                email:         row.email,
-                phone:         row.phone,
-                mobile:        row.mobile,
-                employeeCount: row.employee_count
-            };
-        }
-        function normaliseAgency(row) {
-            return {
-                id:            row.id,
-                agencyName:    row.agency_name,
-                licenseNumber: row.license_number,
-                city:          row.city,
-                email:         row.email,
-                mobile:        row.mobile,
-                isApproved:    row.is_approved
-            };
-        }
-        function normaliseJob(row) {
-            return {
-                id:            row.id,
-                employerId:    row.employer_id,
-                employerName:  row.employer_name,
-                title:         row.title,
-                country:       row.country,
-                vacancyCount:  row.vacancy_count,
-                salaryAmount:  row.salary_amount,
-                currency:      row.currency,
-                slbfeRequired: row.slbfe_required,
-                status:        row.status
-            };
-        }
-        function normalisePitch(row) {
-            return { key: row.pitch_key, agencyId: row.agency_id, jobId: row.job_id };
-        }
-
-        // ── Single fetchTable (normalises on load) ────────────────────
-        async function fetchTable(key) {
-            const { data, error } = await _supabase.from(TABLE[key]).select('*');
-            if (error) { console.error('fetchTable', key, error.message); _cache[key] = []; return []; }
-            const raw = data || [];
-            if      (key === 'wconnect_employers') _cache[key] = raw.map(normaliseEmployer);
-            else if (key === 'wconnect_agencies')  _cache[key] = raw.map(normaliseAgency);
-            else if (key === 'wconnect_jobs')      _cache[key] = raw.map(normaliseJob);
-            else if (key === 'wconnect_pitches')   _cache[key] = raw.map(normalisePitch);
-            else _cache[key] = raw;
-            return _cache[key];
-        }
-
-        function getStorage(key) { return _cache[key] || []; }
-        function setStorage(key, arr) { _cache[key] = arr; }
-
-        async function refreshAll() {
-            await Promise.all(Object.keys(TABLE).map(k => fetchTable(k)));
-            renderAllViews();
-        }
-
-        // ── Email uniqueness check ────────────────────────────────────
-        async function verifyUniqueEmail(email) {
-            const lower = email.toLowerCase();
-            return !getStorage('wconnect_employers').some(e => e.email.toLowerCase() === lower)
-                && !getStorage('wconnect_agencies').some(a => a.email.toLowerCase() === lower);
-        }
-
-        // ── Employer Signup ───────────────────────────────────────────
-async function handleClientSignup(e) {
-    e.preventDefault();
-    const email    = document.getElementById('signupEmail').value.trim();
-    const password = document.getElementById('signupPassword').value;
-
-    if (!(await verifyUniqueEmail(email))) {
-        alert("Employer Email Already Registered. Kindly Login to Proceed.");
-        return;
-    }
-
-    // Step 1: Create auth user
-const { data: authData, error: authErr } = await _supabase.auth.signUp({
-    email,
-    password,
-    options: {
-        data: {
-            display_name: document.getElementById('signupCompanyName').value.trim(),
-            role:         'employer',
-            city:         document.getElementById('signupCity').value.trim(),
-            country:      document.getElementById('signupCountry').value
-        }
-    }
-});
-if (authErr) { alert('Signup failed: ' + authErr.message); return; }
-
-    // Step 2: Guard — if identities is empty, email already exists in Auth
-    if (!authData.user || !authData.user.identities || authData.user.identities.length === 0) {
-        alert("This email is already registered. Please log in or use a different email.");
-        return;
-    }
-
-    const uid = authData.user.id;
-
-    const codeP     = document.getElementById('signupPhoneCode').value;
-    const numP      = document.getElementById('signupPhone').value.trim();
-    const extP      = document.getElementById('signupExt').value.trim();
-    const fullPhone = extP ? `${codeP} ${numP} ext ${extP}` : `${codeP} ${numP}`;
-    const codeM     = document.getElementById('signupMobileCode').value;
-    const numM      = document.getElementById('signupMobile').value.trim();
-
-    const profile = {
-        id:             uid,
-        company_name:   document.getElementById('signupCompanyName').value.trim(),
-        city:           document.getElementById('signupCity').value.trim(),
-        country:        document.getElementById('signupCountry').value,
-        email:          email,
-        phone:          fullPhone,
-        mobile:         `${codeM} ${numM}`,
-        employee_count: document.getElementById('signupEmployees').value
-    };
-
-    const { error: empErr } = await _supabase.from('employers').insert([profile]);
-    if (empErr) { alert('Profile save failed: ' + empErr.message); return; }
-
-    await _supabase.from('email_captures').insert([{ email, role: 'employer' }]);
-    document.getElementById('clientSignupForm').reset();
-    closeModal('clientSignupModal');
-    alert("Registration successful! Please check your email inbox and click the verification link to activate your account. You can then log in.");
-}
-        
-        // ── Agency Signup ─────────────────────────────────────────────
-async function handleAgentSignup(e) {
-    e.preventDefault();
-    const email    = document.getElementById('agentSignupEmail').value.trim();
-    const password = document.getElementById('agentSignupPassword').value;
-
-    if (!(await verifyUniqueEmail(email))) {
-        alert("Agency Email Already Registered. Kindly Login to Proceed.");
-        return;
-    }
-
-    // Step 1: Create auth user
-const { data: authData, error: authErr } = await _supabase.auth.signUp({
-    email,
-    password,
-    options: {
-        data: {
-            display_name:   document.getElementById('agentSignupName').value.trim(),
-            role:           'agency',
-            city:           document.getElementById('agentSignupCity').value.trim(),
-            license_number: document.getElementById('agentSignupLicense').value.trim()
-        }
-    }
-});
-if (authErr) { alert('Signup failed: ' + authErr.message); return; }
-    
-    // Step 2: Guard — if identities is empty, email already exists in Auth
-    if (!authData.user || !authData.user.identities || authData.user.identities.length === 0) {
-        alert("This email is already registered. Please log in or use a different email.");
-        return;
-    }
-
-    const uid = authData.user.id;
-
-    const mobileNum = document.getElementById('agentSignupMobile').value.trim();
-    const profile = {
-        id:             uid,
-        agency_name:    document.getElementById('agentSignupName').value.trim(),
-        license_number: document.getElementById('agentSignupLicense').value.trim(),
-        city:           document.getElementById('agentSignupCity').value.trim(),
-        email:          email,
-        mobile:         `+94 ${mobileNum}`,
-        is_approved:    false
-    };
-
-    const { error: agErr } = await _supabase.from('agencies').insert([profile]);
-    if (agErr) { alert('Profile save failed: ' + agErr.message); return; }
-
-    await _supabase.from('email_captures').insert([{ email, role: 'agency' }]);
-    document.getElementById('agentSignupForm').reset();
-    closeModal('agentSignupModal');
-    alert("Registration successful! Please check your email inbox and click the verification link. Once confirmed, log in to access your agency panel. Note: your account also requires admin approval before you can submit expressions of interest.");
-}
-        
-// ── Login ────────────────────────────────────────────────────
-async function executeLogin(e, role) {
-    e.preventDefault();
-
-    if (role === 'client') {
-        const email    = document.getElementById('loginClientEmail').value.trim();
-        const password = document.getElementById('loginClientPassword').value;
-
-        const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
-        if (error) { alert("Access Denied: " + error.message); return; }
-
-        // Block unverified — offer resend
-        if (!data.user.email_confirmed_at) {
-            await _supabase.auth.signOut();
-            const resend = confirm("Your email is not verified yet.\n\nClick OK to resend the verification email, or Cancel to dismiss.");
-            if (resend) {
-                const { error: resendErr } = await _supabase.auth.resend({
-                    type: 'signup',
-                    email: email
-                });
-                if (resendErr) {
-                    alert("Could not resend email: " + resendErr.message);
-                } else {
-                    alert("Verification email resent! Please check your inbox and click the link to activate your account.");
-                }
+        function showLineItemForm() {
+            const country = document.getElementById('commonWorkCountry').value;
+            const deadline = document.getElementById('commonProjectDeadline').value;
+            if (!country || !deadline) {
+                alert("Please declare Global 'Work Country' and 'Project Deadline' inputs before configuring line items.");
+                return;
             }
-            return;
+            document.getElementById('commonWorkCountry').disabled = true;
+            document.getElementById('commonProjectDeadline').disabled = true;
+
+            document.getElementById('dynamicLineItemForm').classList.remove('hidden');
         }
 
-        const uid = data.user.id;
-        const { data: profile, error: pErr } = await _supabase
-            .from('employers').select('*').eq('id', uid).single();
-        if (pErr || !profile) {
-            alert("Employer profile not found. Please contact support.");
-            return;
-        }
-
-        sessionUser = normaliseEmployer(profile);
-        closeModal('clientLoginModal');
-        saveSession('client', sessionUser);
-        switchRole('client');
-
-    } else if (role === 'agent') {
-        const email    = document.getElementById('loginAgentEmail').value.trim();
-        const password = document.getElementById('loginAgentPassword').value;
-
-        const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
-        if (error) { alert("Access Denied: " + error.message); return; }
-
-        // Block unverified — offer resend
-        if (!data.user.email_confirmed_at) {
-            await _supabase.auth.signOut();
-            const resend = confirm("Your email is not verified yet.\n\nClick OK to resend the verification email, or Cancel to dismiss.");
-            if (resend) {
-                const { error: resendErr } = await _supabase.auth.resend({
-                    type: 'signup',
-                    email: email
-                });
-                if (resendErr) {
-                    alert("Could not resend email: " + resendErr.message);
-                } else {
-                    alert("Verification email resent! Please check your inbox and click the link to activate your account.");
-                }
+        function hideLineItemForm() {
+            document.getElementById('dynamicLineItemForm').classList.add('hidden');
+            clearLineItemFields();
+            if(stagedJobItems.length === 0) {
+                document.getElementById('commonWorkCountry').disabled = false;
+                document.getElementById('commonProjectDeadline').disabled = false;
             }
-            return;
         }
 
-        const uid = data.user.id;
-        const { data: profile, error: pErr } = await _supabase
-            .from('agencies').select('*').eq('id', uid).single();
-        if (pErr || !profile) {
-            alert("Agency profile not found. Please contact support.");
-            return;
-        }
+        function addCurrentJobToList() {
+            const category = document.getElementById('jobFieldCategory').value.trim();
+            const qty = parseInt(document.getElementById('jobFieldQuantity').value, 10);
+            const salary = document.getElementById('jobFieldSalary').value.trim();
+            const currency = document.getElementById('jobFieldCurrency').value;
+            const hours = document.getElementById('jobFieldHours').value.trim();
+            const days = document.getElementById('jobFieldDays').value.trim();
+            const ot = document.getElementById('jobFieldOT').value;
+            const food = document.getElementById('jobFieldFood').value;
+            const accom = document.getElementById('jobFieldAccommodation').value;
+            const medical = document.getElementById('jobFieldMedical').value;
+            const visa = document.getElementById('jobFieldVisa').value;
+            const ticket = document.getElementById('jobFieldTicket').value;
 
-        sessionUser = normaliseAgency(profile);
-        closeModal('agentLoginModal');
-        saveSession('agent', sessionUser);
-        switchRole('agent');
-    }
-}
-        
-// ── Logout ────────────────────────────────────────────────────
-async function handleLogout() {
-    await _supabase.auth.signOut();  // invalidates the JWT on Supabase side
-    sessionRole = 'landing';
-    sessionUser = null;
-    clearSession();
-    switchRole('landing');
-}
-
-// ── Session persistence (sessionStorage – tab-scoped) ─────────
-function saveSession(role, userObj) {
-    sessionStorage.setItem('wconnect_session_role', role);
-    sessionStorage.setItem('wconnect_session_user', JSON.stringify(userObj));
-}
-
-// ── Session restore: validates JWT with Supabase first ────────
-async function restoreSession() {
-    // Ask Supabase if there is a valid live session
-    const { data: { session } } = await _supabase.auth.getSession();
-    if (!session) {
-        clearSession();
-        return false;
-    }
-
-    const cachedRole = sessionStorage.getItem('wconnect_session_role');
-    if (!cachedRole) return false;
-
-    const uid = session.user.id;
-    try {
-        if (cachedRole === 'client') {
-            const { data: profile, error } = await _supabase
-                .from('employers').select('*').eq('id', uid).single();
-            if (error || !profile) return false;
-            sessionUser = normaliseEmployer(profile);
-            sessionRole = 'client';
-            switchRole('client');
-        } else if (cachedRole === 'agent') {
-            const { data: profile, error } = await _supabase
-                .from('agencies').select('*').eq('id', uid).single();
-            if (error || !profile) return false;
-            sessionUser = normaliseAgency(profile);
-            sessionRole = 'agent';
-            switchRole('agent');
-        }
-        return true;
-    } catch(_) { return false; }
-}
-
-function clearSession() {
-    sessionStorage.removeItem('wconnect_session_role');
-    sessionStorage.removeItem('wconnect_session_user');
-}
- 
-        async function handleJobPost(e) {
-            e.preventDefault();
-            if (sessionRole !== 'client' || !sessionUser) return;
-
-            const payload = {
-                employer_id:   sessionUser.id,
-                employer_name: sessionUser.companyName,
-                title:         document.getElementById('jobTitle').value.trim(),
-                country:       document.getElementById('jobCountry').value,
-                vacancy_count: document.getElementById('jobCount').value,
-                salary_amount: document.getElementById('jobSalary').value.trim(),
-                currency:      document.getElementById('jobCurrency').value,
-                slbfe_required: document.getElementById('jobSlbfe').checked,
-                status:        'PENDING'
-            };
-
-            const { error } = await _supabase.from('jobs').insert([payload]);
-            if (error) { alert('Job post failed: ' + error.message); return; }
-
-            await fetchTable('wconnect_jobs');
-            document.getElementById('jobForm').reset();
-            closeModal('jobModal');
-            renderAllViews();
-            alert("Job Specification Quota posted successfully inside our datastore feed.");
-        }
-
-async function requestJobDeletion(jobId) {
-    const userConfirmed = confirm("Are you sure you want to request deletion for this job? This will await admin approval.");
-    if (!userConfirmed) return;
-
-    const { error } = await _supabase.from('jobs').update({ status: 'DELETE_REQUESTED' }).eq('id', jobId);
-    if (error) { alert('Update failed: ' + error.message); return; }
-
-    await fetchTable('wconnect_jobs');
-    renderAllViews();
-    alert("Deletion Request filed for administrator approval clearance loop.");
-}
-
-async function executeFinalAdminDelete(jobId) {
-    const doubleCheck = confirm("Admin Action: Are you sure you want to officially APPROVE this deletion and permanently remove this job posting?");
-    if (!doubleCheck) return;
-
-    // Cascade: remove dependent pitches first
-    await _supabase.from('pitches').delete().eq('job_id', jobId);
-    const { error } = await _supabase.from('jobs').delete().eq('id', jobId);
-    if (error) { alert('Delete failed: ' + error.message); return; }
-
-    await Promise.all([fetchTable('wconnect_jobs'), fetchTable('wconnect_pitches')]);
-    renderAllViews();
-    alert("The job posting has been successfully approved for deletion and completely purged from the system.");
-}
-
-        async function executePitch(jobId) {
-            if (sessionRole !== 'agent' || !sessionUser) return;
-            if (!sessionUser.isApproved) {
-                alert("Approval Pending");
+            if (!category || isNaN(qty) || qty <= 0 || !salary || !currency || !hours || !days) {
+                alert("Operational requirement breakdown parameters mismatch. Check all input allocations.");
                 return;
             }
 
-            const pitches = getStorage('wconnect_pitches');
-            const alreadyPitched = pitches.some(p => p.agencyId === sessionUser.id && p.jobId === jobId);
-            if (!alreadyPitched) {
-                const pitchKey = `${sessionUser.id}||${jobId}`;
-                const { error } = await _supabase.from('pitches').insert([{
-                    pitch_key:  pitchKey,
-                    agency_id:  sessionUser.id,
-                    job_id:     jobId
-                }]);
-                if (error) { alert('Pitch failed: ' + error.message); return; }
-                await fetchTable('wconnect_pitches');
-                renderAllViews();
-                alert("Expression of Sourcing Capacity dispatched to Client database registry logs.");
+            stagedJobItems.push({
+                category, qty, salary, currency, hours, days, ot, food, accom, medical, visa, ticket
+            });
+
+            renderStagedTable();
+            clearLineItemFields();
+            document.getElementById('dynamicLineItemForm').classList.add('hidden');
+            evaluatePublishButtonPresence();
+        }
+
+        function renderStagedTable() {
+            const tbody = document.getElementById('staged-line-items-tbody');
+            const badge = document.getElementById('staged-count-badge');
+            
+            if (stagedJobItems.length === 0) {
+                tbody.innerHTML = `<tr id="empty-stage-row"><td colspan="6" class="p-8 text-center text-gray-400 italic font-medium">No requirements added to line items list yet. Fill configuration above and select 'Add To List'.</td></tr>`;
+                badge.innerText = "0 Items Loaded";
+                return;
+            }
+
+            badge.innerText = `${stagedJobItems.length} Item(s) Loaded`;
+            tbody.innerHTML = "";
+
+            stagedJobItems.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.className = "hover:bg-gray-50 border-b border-gray-100";
+                row.innerHTML = `
+                    <td class="p-2.5 pl-4 font-mono font-bold text-gray-500">#${index + 1}</td>
+                    <td class="p-2.5 font-bold text-gray-900">${item.category}</td>
+                    <td class="p-2.5 text-center font-bold text-blue-900">${item.qty}</td>
+                    <td class="p-2.5 font-medium">${item.currency} ${item.salary}</td>
+                    <td class="p-2.5 text-center text-gray-600">${item.hours} Hrs / ${item.days} Days</td>
+                    <td class="p-2.5 text-center">
+                        <button type="button" onclick="removeStagedItem(${index})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function removeStagedItem(index) {
+            stagedJobItems.splice(index, 1);
+            renderStagedTable();
+            evaluatePublishButtonPresence();
+            if(stagedJobItems.length === 0) {
+                document.getElementById('commonWorkCountry').disabled = false;
+                document.getElementById('commonProjectDeadline').disabled = false;
             }
         }
 
-        async function deleteLineItem(id, storageKey) {
-            if (!confirm("Are you sure you want to delete this row record line item? This action is irreversible.")) return;
-
-            if (storageKey === 'wconnect_pitches') {
-                await _supabase.from('pitches').delete().eq('pitch_key', id);
-                await fetchTable('wconnect_pitches');
-
-            } else if (storageKey === 'wconnect_jobs') {
-                await _supabase.from('pitches').delete().eq('job_id', id);
-                await _supabase.from('jobs').delete().eq('id', id);
-                await Promise.all([fetchTable('wconnect_jobs'), fetchTable('wconnect_pitches')]);
-
-            } else if (storageKey === 'wconnect_employers') {
-                // Cascade: jobs then pitches for those jobs, then employer
-                const myJobs = getStorage('wconnect_jobs').filter(j => j.employerId === id);
-                for (const j of myJobs) {
-                    await _supabase.from('pitches').delete().eq('job_id', j.id);
-                    await _supabase.from('jobs').delete().eq('id', j.id);
-                }
-                await _supabase.from('employers').delete().eq('id', id);
-                await Promise.all([fetchTable('wconnect_employers'), fetchTable('wconnect_jobs'), fetchTable('wconnect_pitches')]);
-
-            } else if (storageKey === 'wconnect_agencies') {
-                await _supabase.from('pitches').delete().eq('agency_id', id);
-                await _supabase.from('agencies').delete().eq('id', id);
-                await Promise.all([fetchTable('wconnect_agencies'), fetchTable('wconnect_pitches')]);
-            }
-
-            renderAllViews();
+        function evaluatePublishButtonPresence() {
+            const btn = document.getElementById('btnPublishJobOrder');
+            if (stagedJobItems.length >= 1) btn.classList.remove('hidden');
+            else btn.classList.add('hidden');
         }
 
-        async function toggleJobApproval(jobId) {
-            const jobs = getStorage('wconnect_jobs');
-            const job  = jobs.find(j => j.id === jobId);
-            if (!job) return;
-            const newStatus = (job.status === 'APPROVED') ? 'PENDING' : 'APPROVED';
-            const { error } = await _supabase.from('jobs').update({ status: newStatus }).eq('id', jobId);
-            if (error) { alert('Update failed: ' + error.message); return; }
-            await fetchTable('wconnect_jobs');
-            renderAllViews();
+        function clearLineItemFields() {
+            document.getElementById('jobFieldCategory').value = "";
+            document.getElementById('jobFieldQuantity').value = "";
+            document.getElementById('jobFieldSalary').value = "";
+            document.getElementById('jobFieldCurrency').selectedIndex = 0;
+            document.getElementById('jobFieldHours').value = "";
+            document.getElementById('jobFieldDays').value = "";
+            document.getElementById('jobFieldOT').selectedIndex = 0;
+            document.getElementById('jobFieldFood').selectedIndex = 0;
+            document.getElementById('jobFieldAccommodation').selectedIndex = 0;
+            document.getElementById('jobFieldMedical').selectedIndex = 0;
+            document.getElementById('jobFieldVisa').selectedIndex = 0;
+            document.getElementById('jobFieldTicket').selectedIndex = 0;
         }
 
-        async function toggleAgencyAuth(id) {
-            const agencies = getStorage('wconnect_agencies');
-            const agency   = agencies.find(a => a.id === id);
-            if (!agency) return;
-            const newVal = !agency.isApproved;
-            const { error } = await _supabase.from('agencies').update({ is_approved: newVal }).eq('id', id);
-            if (error) { alert('Update failed: ' + error.message); return; }
-            await fetchTable('wconnect_agencies');
-            if (sessionUser && sessionUser.id === id) {
-                sessionUser.isApproved = newVal;
-                saveSession(sessionRole, sessionUser);
-            }
-            renderAllViews();
+        function commitPublishJobOrderRequest() {
+            const country = document.getElementById('commonWorkCountry').value;
+            const deadline = document.getElementById('commonProjectDeadline').value;
+            const refNo = `Connect-${internalReferenceSequence++}`;
+            const today = new Date().toISOString().split('T')[0];
+
+            let cumulativeQty = 0;
+            stagedJobItems.forEach(i => cumulativeQty += i.qty);
+
+            const jobOrderRecord = {
+                referenceNumber: refNo,
+                postingDate: today,
+                workCountry: country,
+                projectDeadline: deadline,
+                totalQuantity: cumulativeQty,
+                lineItems: [...stagedJobItems],
+                interestedAgencies: 0,
+                workflowStatus: "Active database processing"
+            };
+
+            globalJobOrderDatabase.push(jobOrderRecord);
+            closeModal('jobModal');
+            updateDashboardMetrics();
+            renderMainArchiveTable();
+            synchronizeSourcingFeedCollections();
+            showToastMessage(`Job manifest reference record generated: ${refNo}`, "success");
         }
 
-        function switchRole(role) {
-            sessionRole = role;
-            document.querySelectorAll('.view-section').forEach(view => view.classList.add('hidden'));
-
-            const publicHeader = document.getElementById('public-header');
-            const secureHeader = document.getElementById('secure-header');
-            const secureUserLabel = document.getElementById('secure-user-label');
-            const footer = document.getElementById('public-footer');
-
-            if (role === 'landing') {
-                document.body.classList.remove('is-logged-in');
-                publicHeader.classList.remove('hidden');
-                publicHeader.classList.add('flex');
-                secureHeader.classList.add('hidden');
-                secureHeader.classList.remove('flex');
-                footer.classList.remove('hidden');
-                document.getElementById('view-landing').classList.remove('hidden');
-            } else {
-                document.body.classList.add('is-logged-in');
-                publicHeader.classList.add('hidden');
-                publicHeader.classList.remove('flex');
-                secureHeader.classList.remove('hidden');
-                secureHeader.classList.add('flex');
-                footer.classList.add('hidden');
-
-                let systemLabel = '';
-                if (role === 'client' && sessionUser) {
-                    document.getElementById('view-client').classList.remove('hidden');
-                    systemLabel = `Employer Account (${sessionUser.email})`;
-                } else if (role === 'agent' && sessionUser) {
-                    document.getElementById('view-agent').classList.remove('hidden');
-                    systemLabel = `Agency Account (${sessionUser.email})`;
-                } else if (role === 'admin') {
-                    document.getElementById('view-admin').classList.remove('hidden');
-                    systemLabel = "Admin Dashboard";
-                }
-                secureUserLabel.innerHTML = `<i class="fa-solid fa-circle-user mr-1.5 text-emerald-400"></i><span class="text-white font-mono lowercase tracking-normal pl-0.5">${systemLabel}</span>`;
-            }
-
-            document.getElementById('client-edit-form-container').classList.add('hidden');
-            document.getElementById('agent-edit-form-container').classList.add('hidden');
-
-            renderAllViews();
+        function updateDashboardMetrics() {
+            document.getElementById('client-total-orders').innerText = globalJobOrderDatabase.length;
+            let grandTotalVacancies = 0;
+            globalJobOrderDatabase.forEach(order => grandTotalVacancies += order.totalQuantity);
+            document.getElementById('client-active-vacancies').innerText = grandTotalVacancies;
         }
 
-        function toggleEditProfile(role) {
-            if (role === 'client') {
-                const container = document.getElementById('client-edit-form-container');
-                if (container.classList.contains('hidden')) {
-                    container.classList.remove('hidden');
-                    document.getElementById('editClientCompany').value = sessionUser.companyName || '';
-                    document.getElementById('editClientCity').value = sessionUser.city || '';
-                    document.getElementById('editClientCountry').value = sessionUser.country || '';
-                    document.getElementById('editClientPhone').value = sessionUser.phone || '';
-                    document.getElementById('editClientMobile').value = sessionUser.mobile || '';
-                } else {
-                    container.classList.add('hidden');
-                }
-            } else if (role === 'agent') {
-                const container = document.getElementById('agent-edit-form-container');
-                if (container.classList.contains('hidden')) {
-                    container.classList.remove('hidden');
-                    document.getElementById('editAgentName').value = sessionUser.agencyName || '';
-                    document.getElementById('editAgentLicense').value = sessionUser.licenseNumber || '';
-                    document.getElementById('editAgentCity').value = sessionUser.city || '';
-                    document.getElementById('editAgentMobile').value = sessionUser.mobile || '';
-                } else {
-                    container.classList.add('hidden');
-                }
-            }
+        function renderMainArchiveTable() {
+            const tbody = document.getElementById('client-job-table');
+            tbody.innerHTML = "";
+
+            globalJobOrderDatabase.forEach((order, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 border-b border-gray-200 transition-colors";
+                tr.innerHTML = `
+                    <td class="p-3 pl-4 font-mono font-bold text-blue-950">${order.referenceNumber}</td>
+                    <td class="p-3 font-medium text-gray-700">${order.postingDate}</td>
+                    <td class="p-3 text-center font-bold text-gray-950">${order.totalQuantity}</td>
+                    <td class="p-3 font-medium text-red-600">${order.projectDeadline}</td>
+                    <td class="p-3 text-center">
+                        <button onclick="launchSpecsManifestSheet(${index})" class="text-xs bg-gray-900 hover:bg-gray-800 text-white px-3 py-1 rounded-md shadow-xs flex items-center mx-auto space-x-1">
+                            <i class="fa-solid fa-file-invoice"></i> <span>View Sheet</span>
+                        </button>
+                    </td>
+                    <td class="p-3 text-gray-500 font-medium">${order.interestedAgencies} Agencies</td>
+                    <td class="p-3"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">${order.workflowStatus}</span></td>
+                    <td class="p-3 pr-4 text-center">
+                        <button class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
-        async function saveProfileChanges(role) {
-            if (role === 'client') {
-                const updates = {
-                    company_name: document.getElementById('editClientCompany').value.trim(),
-                    city:         document.getElementById('editClientCity').value.trim(),
-                    country:      document.getElementById('editClientCountry').value.trim(),
-                    phone:        document.getElementById('editClientPhone').value.trim(),
-                    mobile:       document.getElementById('editClientMobile').value.trim()
-                };
-                const { error } = await _supabase.from('employers').update(updates).eq('id', sessionUser.id);
-                if (error) { alert('Save failed: ' + error.message); return; }
-                await fetchTable('wconnect_employers');
-                const fresh = getStorage('wconnect_employers').find(e => e.id === sessionUser.id);
-                if (fresh) { sessionUser = fresh; saveSession('client', fresh); }
-                document.getElementById('client-edit-form-container').classList.add('hidden');
+        function launchSpecsManifestSheet(index) {
+            const order = globalJobOrderDatabase[index];
+            document.getElementById('lblSheetRefNo').innerText = order.referenceNumber;
+            const container = document.getElementById('specsSheetRenderContainer');
+            
+            let htmlPayload = `
+                <div class="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100 mb-4">
+                    <div><p class="text-[10px] font-bold uppercase text-gray-400">Global Country Context</p><p class="text-sm font-bold text-gray-900">${order.workCountry}</p></div>
+                    <div><p class="text-[10px] font-bold uppercase text-gray-400">Global Target Execution Deadline</p><p class="text-sm font-bold text-red-600">${order.projectDeadline}</p></div>
+                </div>
+                <h4 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">Itemized Breakdown Structure Rows</h4>
+            `;
 
-            } else if (role === 'agent') {
-                const updates = {
-                    agency_name:    document.getElementById('editAgentName').value.trim(),
-                    license_number: document.getElementById('editAgentLicense').value.trim(),
-                    city:           document.getElementById('editAgentCity').value.trim(),
-                    mobile:         document.getElementById('editAgentMobile').value.trim()
-                };
-                const { error } = await _supabase.from('agencies').update(updates).eq('id', sessionUser.id);
-                if (error) { alert('Save failed: ' + error.message); return; }
-                await fetchTable('wconnect_agencies');
-                const fresh = getStorage('wconnect_agencies').find(a => a.id === sessionUser.id);
-                if (fresh) { sessionUser = fresh; saveSession('agent', fresh); }
-                document.getElementById('agent-edit-form-container').classList.add('hidden');
-            }
-            renderAllViews();
-            alert("Corporate account specifications saved successfully.");
-        }
-
-        function renderAllViews() {
-            const jobs = getStorage('wconnect_jobs');
-            const employers = getStorage('wconnect_employers');
-            const agencies = getStorage('wconnect_agencies');
-            const pitches = getStorage('wconnect_pitches');
-
-            if (sessionRole === 'client' && sessionUser) {
-                const freshUser = employers.find(e => e.id === sessionUser.id) || sessionUser;
-                if (freshUser !== sessionUser) {
-                    sessionUser = freshUser;
-                }
-                document.getElementById('workspace-client-name').innerText = sanitize(freshUser.companyName);
-                document.getElementById('workspace-client-meta').innerHTML = `
-                    <div class="flex flex-wrap gap-x-4 gap-y-1 font-medium text-gray-600">
-                        <span><i class="fa-solid fa-location-dot text-blue-900 mr-1.5 w-3 text-center"></i>Employer Location: <strong class="text-gray-800">${sanitize(freshUser.city)}, ${sanitize(freshUser.country)}</strong></span>
-                        <span><i class="fa-solid fa-envelope text-blue-900 mr-1.5 w-3 text-center"></i>Employer Email: <strong class="text-gray-800 font-mono">${sanitize(freshUser.email)}</strong></span>
-                        <span><i class="fa-solid fa-phone text-blue-900 mr-1.5 w-3 text-center"></i>Employer Landline: <strong class="text-gray-800 font-mono">${sanitize(freshUser.phone || 'N/A')}</strong></span>
-                        <span><i class="fa-solid fa-mobile-screen-button text-blue-900 mr-1.5 w-3 text-center"></i>Employer Mobile Number: <strong class="text-gray-800 font-mono">${sanitize(freshUser.mobile || 'N/A')}</strong></span>
+            order.lineItems.forEach((item, idx) => {
+                htmlPayload += `
+                    <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-xs space-y-3">
+                        <div class="flex justify-between items-center border-b border-gray-100 pb-1.5">
+                            <span class="font-mono font-bold text-blue-900 bg-blue-50 px-2 py-0.5 rounded text-[11px]">Line Item Component Block #${idx + 1}</span>
+                            <span class="font-bold text-gray-900">Category Target: ${item.category}</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-[11px]">
+                            <div><span class="block text-gray-400">Allocated Qty:</span><strong class="text-gray-900">${item.qty} Vacancies</strong></div>
+                            <div><span class="block text-gray-400">Financial Base Package:</span><strong class="text-gray-900">${item.currency} ${item.salary}</strong></div>
+                            <div><span class="block text-gray-400">Working Shifts:</span><strong class="text-gray-900">${item.hours} Hrs/Day</strong></div>
+                            <div><span class="block text-gray-400">Weekly Standard:</span><strong class="text-gray-900">${item.days} Days/Week</strong></div>
+                        </div>
+                        <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 pt-2 border-t border-dashed border-gray-100 text-[10px]">
+                            <div class="p-1.5 bg-gray-50 rounded text-center"><span class="block text-gray-400">Overtime</span><strong>${item.ot}</strong></div>
+                            <div class="p-1.5 bg-gray-50 rounded text-center"><span class="block text-gray-400">Food/Allow</span><strong>${item.food}</strong></div>
+                            <div class="p-1.5 bg-gray-50 rounded text-center"><span class="block text-gray-400">Housing</span><strong>${item.accom}</strong></div>
+                            <div class="p-1.5 bg-gray-50 rounded text-center"><span class="block text-gray-400">Medical Ins</span><strong>${item.medical}</strong></div>
+                            <div class="p-1.5 bg-gray-50 rounded text-center"><span class="block text-gray-400">Visa Prov.</span><strong>${item.visa}</strong></div>
+                            <div class="p-1.5 bg-gray-50 rounded text-center"><span class="block text-gray-400">Air Ticket</span><strong>${item.ticket}</strong></div>
+                        </div>
                     </div>
                 `;
+            });
 
-                const myJobs = jobs.filter(j => j.employerId === sessionUser.id);
-                document.getElementById('client-total-orders').innerText = myJobs.length;
-                document.getElementById('client-active-vacancies').innerText = myJobs.filter(j => j.status === 'APPROVED').reduce((acc, curr) => acc + parseInt(curr.vacancyCount || 0), 0);
-                
-                const myJobIds = myJobs.map(j => j.id);
-                const relatedPitchesCount = pitches.filter(p => myJobIds.includes(p.jobId)).length;
-                document.getElementById('client-pitches-count').innerText = relatedPitchesCount;
+            container.innerHTML = htmlPayload;
+            
+            // Safe view state dismissal sequence preventing focus loop traps
+            const jobModalObj = document.getElementById('jobModal');
+            if(!jobModalObj.classList.contains('hidden')) closeModal('jobModal');
 
-                const clientJobTable = document.getElementById('client-job-table');
-                clientJobTable.innerHTML = '';
-                if (myJobs.length === 0) {
-                    clientJobTable.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400 italic font-medium bg-gray-50/50">You have not published any job specification quotas yet.</td></tr>`;
-                } else {
+            const targetModal = document.getElementById('viewSpecsSheetModal');
+            targetModal.classList.remove('hidden');
+            targetModal.classList.add('flex');
+        }
 
-                        myJobs.forEach(job => {
-                        // Calculate the total pitches specific only to this row loop's jobId
-                        const jobSpecificPitchCount = pitches.filter(p => p.jobId === job.id).length;
-                        
-                        let statusBadge = '';
-                        if (job.status === 'APPROVED') {
-                            statusBadge = '<span class="bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold px-2 py-0.5 rounded text-[10px] tracking-wide uppercase shadow-2xs">Live Open</span>';
-                        } else if (job.status === 'DELETE_REQUESTED') {
-                            statusBadge = '<span class="bg-rose-100 text-rose-700 border border-rose-200 font-bold px-2 py-0.5 rounded text-[10px] tracking-wide uppercase animate-pulse">Pending Removal</span>';
-                        } else {
-                            statusBadge = '<span class="bg-amber-100 text-amber-800 border border-amber-200 font-bold px-2 py-0.5 rounded text-[10px] tracking-wide uppercase">Vetting Stage</span>';
-                        }
+        // ============================================================
+        // AGENCY WORKSPACE FEED SYNCHRONIZATIONS
+        // ============================================================
+        function synchronizeSourcingFeedCollections() {
+            const feedContainer = document.getElementById('agency-feed-container');
+            if(!feedContainer) return;
 
-                        const displayCurrency = job.currency || 'USD';
-                        const displayAmt = job.salaryAmount || job.salary || 'N/A';
-
-                        clientJobTable.innerHTML += `
-                            <tr class="hover:bg-gray-50/40 transition">
-                                <td class="p-3 font-bold text-gray-900 text-center">${sanitize(job.title)}</td>
-                                <td class="p-3 text-gray-700 font-medium text-center">${sanitize(job.country)}</td>
-                                <td class="p-3 font-mono font-bold text-gray-900 text-center">${sanitize(job.vacancyCount)} Slots</td>
-                                <td class="p-3 text-emerald-600 font-bold text-center">${sanitize(displayCurrency)} ${sanitize(displayAmt)}</td>
-                                <td class="p-3 text-center">${job.slbfeRequired ? '<span class="text-[10px] text-blue-700 bg-blue-50 border border-blue-100 font-bold px-1.5 py-0.5 rounded">Mandatory SLBFE</span>' : '<span class="text-xs text-gray-400">Exempt Plan</span>'}</td>
-                                <td class="p-3 font-bold text-gray-900 text-center">${jobSpecificPitchCount}</td>
-                                <td class="p-3 text-center">${statusBadge}</td>
-                                <td class="p-3 text-center flex justify-center">${(job.status === 'DELETE_REQUESTED' || job.status === 'YES') ? `<button disabled class="bg-gray-100 text-gray-400 border border-gray-200 font-bold px-2 py-1 rounded text-[11px] cursor-not-allowed">Pending Admin Review</button>` : `<button onclick="requestJobDeletion('${job.id}')" class="bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 font-bold px-2 py-1 rounded text-[11px]">Request Delete</button>`}</td>
-                            </tr>
-                            </tr>
-                        `;
-                    });
-                }
+            if(globalJobOrderDatabase.length === 0) {
+                feedContainer.innerHTML = `
+                    <div class="col-span-full bg-white border border-gray-200 p-8 text-center rounded-xl text-xs text-gray-400 italic font-medium">
+                        No active international hiring demand requests found in database log.
+                    </div>`;
+                return;
             }
-                    
-                if (sessionRole === 'agent' && sessionUser) {
-                const refreshedMe = agencies.find(a => a.id === sessionUser.id) || sessionUser;
-                document.getElementById('workspace-agent-name').innerText = sanitize(refreshedMe.agencyName);
-                document.getElementById('workspace-agent-meta').innerHTML = `
-                    <div class="flex flex-wrap gap-x-4 gap-y-1 font-medium text-gray-600 text-[11px]">
-                        <span><i class="fa-solid fa-id-card text-emerald-700 mr-1 w-3 text-center"></i>SLBFE License Number: <strong class="font-mono text-gray-800">${sanitize(refreshedMe.licenseNumber)}</strong></span>
-                        <span><i class="fa-solid fa-map-location-dot text-emerald-700 mr-1 w-3 text-center"></i>Agency Location: <strong class="text-gray-800">${sanitize(refreshedMe.city)}</strong></span>
-                        <span><i class="fa-solid fa-envelope-circle-check text-emerald-700 mr-1 w-3 text-center"></i>Agency Email: <strong class="font-mono text-gray-800">${sanitize(refreshedMe.email)}</strong></span>
-                        <span><i class="fa-solid fa-phone-volume text-emerald-700 mr-1 w-3 text-center"></i>Agency Mobile Number: <strong class="font-mono text-gray-800">${sanitize(refreshedMe.mobile)}</strong></span>
+
+            feedContainer.innerHTML = "";
+            globalJobOrderDatabase.forEach((order, index) => {
+                const card = document.createElement('div');
+                card.className = "bg-white border border-gray-200 rounded-xl p-5 shadow-xs flex flex-col justify-between space-y-4";
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-xs font-mono font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded">${order.referenceNumber}</span>
+                            <h4 class="text-sm font-bold text-gray-900 mt-2"><i class="fa-solid fa-earth-asia text-gray-400 mr-1"></i> Sourcing Destination: ${order.workCountry}</h4>
+                        </div>
+                        <span class="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded">Deadline: ${order.projectDeadline}</span>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg flex justify-between text-xs font-semibold text-gray-700">
+                        <span>Combined Vacancies: <strong class="text-gray-900">${order.totalQuantity} Openings</strong></span>
+                        <span>Item Breakdown count: <strong class="text-gray-900">${order.lineItems.length} Roles</strong></span>
+                    </div>
+                    <div class="flex space-x-2 pt-2">
+                        <button onclick="launchSpecsManifestSheet(${index})" class="flex-1 bg-gray-900 hover:bg-gray-800 text-white text-xs font-bold py-2 rounded-lg transition-all text-center">Review Details Sheet</button>
+                        <button onclick="applyForJobOrder(${index}, this)" class="flex-1 bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold py-2 rounded-lg transition-all text-center"><i class="fa-solid fa-paper-plane mr-1"></i> Express Sourcing Interest</button>
                     </div>
                 `;
-
-                const banner = document.getElementById('agency-status-banner');
-                if (refreshedMe.isApproved) {
-                    banner.className = "mb-6 p-3.5 bg-emerald-50 border border-emerald-200 rounded-lg text-xs font-bold text-emerald-800 shadow-2xs flex items-center";
-                    banner.innerHTML = `<i class="fa-solid fa-square-check text-emerald-600 text-lg mr-2.5"></i>Account Approved`;
-                } else {
-                    banner.className = "mb-6 p-3.5 bg-amber-50 border border-amber-200 rounded-lg text-xs font-bold text-amber-800 shadow-2xs flex items-center animate-pulse";
-                    banner.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-600 text-lg mr-2.5"></i>Account Verification : Pending`;
-                }
-
-                const agentFeed = document.getElementById('agent-marketplace-feed');
-                agentFeed.innerHTML = '';
-                // Keep the job visible if it is APPROVED OR if it has a pending delete request
-                const activeJobs = jobs.filter(job => job.status === 'APPROVED' || job.status === 'DELETE_REQUESTED' || job.status === 'YES');
-
-                if (activeJobs.length === 0) {
-                    agentFeed.innerHTML = `<div class="col-span-full bg-white p-8 rounded-xl border border-gray-100 text-center text-gray-400 italic font-medium shadow-xs">No international quotas are open right now in the feed. Check back shortly.</div>`;
-                } else {
-                    activeJobs.forEach(job => {
-                        const isSubmitted = pitches.some(p => p.agencyId === refreshedMe.id && p.jobId === job.id);
-                        let buttonStyles = '';
-                        let buttonContent = '';
-                        let disableAttr = '';
-
-                        if (!refreshedMe.isApproved) {
-                            disableAttr = 'disabled';
-                            buttonStyles = "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed w-full font-bold py-2 rounded-lg text-xs mt-4 text-center flex items-center justify-center space-x-1.5";
-                            buttonContent = '<i class="fa-solid fa-lock text-[10px]"></i> <span>Verification Pending Lockout</span>';
-                        } else if (isSubmitted) {
-                            disableAttr = 'disabled';
-                            buttonStyles = "bg-blue-100 text-blue-500 border border-blue-200 cursor-not-allowed w-full font-bold py-2 rounded-lg text-xs mt-4 text-center flex items-center justify-center space-x-1.5 shadow-inner";
-                            buttonContent = '<i class="fa-solid fa-circle-check"></i> <span>Already Submitted</span>';
-                        } else {
-                            buttonStyles = "bg-emerald-600 hover:bg-emerald-700 text-white w-full font-bold py-2 rounded-lg text-xs mt-4 transition shadow-sm text-center flex items-center justify-center space-x-1.5 tracking-wide cursor-pointer";
-                            buttonContent = '<i class="fa-solid fa-paper-plane"></i> <span>Submit Application</span>';
-                        }
-
-                        const displayCurrency = job.currency || 'USD';
-                        const displayAmt = job.salaryAmount || job.salary;
-
-                        agentFeed.innerHTML += `
-                            <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-xs flex flex-col justify-between relative overflow-hidden">
-                                <div>
-                                    <div class="flex justify-between items-start gap-2">
-                                        <h4 class="font-bold text-gray-900 text-sm leading-tight">${sanitize(job.title)}</h4>
-                                        <span class="bg-gray-100 font-mono text-gray-700 px-1.5 py-0.5 rounded text-[10px] whitespace-nowrap shrink-0">${sanitize(job.vacancyCount)} Openings</span>
-                                    </div>
-                                    <p class="text-[11px] text-blue-900 font-bold mt-1 mb-2 flex items-center"><i class="fa-solid fa-building mr-1.5 text-gray-400"></i>${sanitize(job.employerName)}</p>
-                                    <div class="space-y-1 text-xs border-t border-gray-50 pt-2 font-medium">
-                                        <div class="flex justify-between text-gray-500"><span class="text-[11px]">Employer Country:</span> <span class="text-gray-900 font-semibold">${sanitize(job.country)}</span></div>
-                                        <div class="flex justify-between text-gray-500"><span class="text-[11px]">Gross Monthly Salary:</span> <span class="text-emerald-600 font-bold">${sanitize(displayCurrency)} ${sanitize(displayAmt)}</span></div>
-                                        <div class="flex justify-between text-gray-500"><span class="text-[11px]">Routing Verification:</span> <span class="font-semibold text-gray-800">${job.slbfeRequired ? '<span class="text-blue-600 font-bold">SLBFE Required</span>' : '<span class="text-gray-400">Standard Plan</span>'}</span></div>
-                                    </div>
-                                </div>
-                                <button onclick="executePitch('${job.id}')" ${disableAttr} class="${buttonStyles}">
-                                    ${buttonContent}
-                                </button>
-                            </div>
-                        `;
-                    });
-                }
-            }
-
-            if (sessionRole === 'admin') {
-                const adminJobTable = document.getElementById('admin-job-table');
-                adminJobTable.innerHTML = '';
-                if (jobs.length === 0) {
-                    adminJobTable.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-gray-400 italic">No job specifications uploaded.</td></tr>`;
-                } else {
-                    jobs.forEach(job => {
-                        let badgeColor = "bg-amber-100 text-amber-800 border-amber-200";
-                        if (job.status === 'APPROVED') badgeColor = "bg-emerald-100 text-emerald-800 border-emerald-200";
-                        if (job.status === 'DELETE_REQUESTED') badgeColor = "bg-rose-100 text-rose-800 border-rose-200 animate-pulse";
-
-                        const toggleLabel = (job.status === 'APPROVED') ? 'Revoke' : 'Approved';
-                        const toggleBtnStyle = (job.status === 'APPROVED') ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100';
-
-                        adminJobTable.innerHTML += `
-                            <tr class="hover:bg-gray-50/50 border-b border-gray-100">
-                                <td class="p-3 font-bold text-gray-900">${sanitize(job.title)} <span class="block text-[10px] text-gray-400 font-mono font-normal">Slots: ${sanitize(job.vacancyCount)}</span></td>
-                                <td class="p-3 text-blue-900 font-semibold">${sanitize(job.employerName)}</td>
-                                <td class="p-3 text-gray-700">${sanitize(job.country)}</td>
-                                <td class="p-3"><span class="border px-2 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase ${badgeColor}">${sanitize(job.status)}</span></td>
-                                <td class="p-3 text-center flex justify-center">${(job.status === 'DELETE_REQUESTED' || job.status === 'YES') ? `<button onclick="executeFinalAdminDelete('${job.id}')" class="bg-amber-100 text-amber-700 border border-amber-300 hover:bg-amber-200 font-bold px-2 py-1 rounded text-[11px] animate-pulse tracking-wide shadow-xs cursor-pointer">YES (Click to Approve Delete)</button>` : `<span class="text-xs text-gray-400 font-medium">No Request</span>`}</td>
-                                <td class="p-3 text-right space-x-1.5 whitespace-nowrap">
-                                    <button onclick="toggleJobApproval('${job.id}')" class="border font-bold px-2.5 py-1 rounded transition text-[11px] shadow-xs ${toggleBtnStyle}">${toggleLabel}</button>
-                                    <button onclick="deleteLineItem('${job.id}', 'wconnect_jobs')" class="bg-rose-600 text-white hover:bg-rose-700 font-bold px-2.5 py-1 rounded transition text-[11px] shadow-xs"><i class="fa-solid fa-trash-can"></i> Delete</button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                }
-
-                const adminEmployerTable = document.getElementById('admin-employers-table');
-                adminEmployerTable.innerHTML = '';
-                if (employers.length === 0) {
-                    adminEmployerTable.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-gray-400 italic">No employer company registrations recorded.</td></tr>`;
-                } else {
-                    employers.forEach(emp => {
-                        adminEmployerTable.innerHTML += `
-                            <tr class="hover:bg-gray-50/50 border-b border-gray-100">
-                                <td class="p-3 font-bold text-gray-900">${sanitize(emp.companyName)}</td>
-                                <td class="p-3 text-blue-900 font-medium">${sanitize(emp.email)}</td>
-                                <td class="p-3 text-gray-600">${sanitize(emp.city)}, ${sanitize(emp.country)}</td>
-                                <td class="p-3 font-mono text-gray-600">${sanitize(emp.phone || 'N/A')}</td>
-                                <td class="p-3 font-mono text-gray-600">${sanitize(emp.mobile || 'N/A')}</td>
-                                <td class="p-3 text-right">
-                                    <button onclick="deleteLineItem('${emp.id}', 'wconnect_employers')" class="bg-rose-600 text-white hover:bg-rose-700 font-bold px-2.5 py-1 rounded transition text-[11px] shadow-xs"><i class="fa-solid fa-trash-can"></i> Delete</button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                }
-
-                const adminAgencyTable = document.getElementById('admin-agencies-table');
-                adminAgencyTable.innerHTML = '';
-                if (agencies.length === 0) {
-                    adminAgencyTable.innerHTML = `<tr><td colspan="7" class="p-3 text-center text-gray-400 italic">No recruitment agency registration rows found.</td></tr>`;
-                } else {
-                    agencies.forEach(ag => {
-                        const stateLabel = ag.isApproved ? 'Revoke' : 'Approve';
-                        const stateStyle = ag.isApproved ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100';
-                        const statusIndicator = ag.isApproved ? '<span class="text-emerald-600 font-bold text-[10px] bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded">ACTIVE</span>' : '<span class="text-amber-600 font-bold text-[10px] bg-amber-50 border border-amber-100 px-1.5 py-0.5 rounded animate-pulse">PENDING REVIEW</span>';
-
-                        adminAgencyTable.innerHTML += `
-                            <tr class="hover:bg-gray-50/50 border-b border-gray-100">
-                                <td class="p-3 font-bold text-gray-900">${sanitize(ag.agencyName)}</td>
-                                <td class="p-3 font-mono font-bold text-gray-700">${sanitize(ag.licenseNumber)}</td>
-                                <td class="p-3 text-blue-900 font-mono">${sanitize(ag.email)}</td>
-                                <td class="p-3 text-gray-600">${sanitize(ag.city)}</td>
-                                <td class="p-3 font-mono text-gray-600">${sanitize(ag.mobile)}</td>
-                                <td class="p-3">${statusIndicator}</td>
-                                <td class="p-3 text-right space-x-1.5 whitespace-nowrap">
-                                    <button onclick="toggleAgencyAuth('${ag.id}')" class="border font-bold px-2 py-1 rounded transition text-[11px] ${stateStyle}">${stateLabel}</button>
-                                    <button onclick="deleteLineItem('${ag.id}', 'wconnect_agencies')" class="bg-rose-600 text-white hover:bg-rose-700 font-bold px-2 py-1 rounded transition text-[11px] shadow-xs"><i class="fa-solid fa-trash-can"></i> Delete</button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                }
-
-                const adminPitchesTable = document.getElementById('admin-pitches-table');
-                adminPitchesTable.innerHTML = '';
-                if (pitches.length === 0) {
-                    adminPitchesTable.innerHTML = `<tr><td colspan="7" class="p-3 text-center text-gray-400 italic">No Expressions of Interest submissions found in database ledger.</td></tr>`;
-                } else {
-                    pitches.forEach(p => {
-                    const job = jobs.find(j => j.id === p.jobId);
-                    // Skip only if the job is completely missing from the database
-                    if (!job) return;
-                    // Allow rendering if the job is APPROVED OR if it is currently in a pending delete state
-                    if (job.status !== 'APPROVED' && job.status !== 'DELETE_REQUESTED' && job.status !== 'YES') return;
-                    const agency = agencies.find(a => a.id === p.agencyId);
-
-                        const jobTitle = job ? sanitize(job.title) : '<span class="text-gray-400 italic">Purged Row Job Specification</span>';
-                        const jobCountry = job ? sanitize(job.country) : 'N/A';
-                        const vacancies = job ? sanitize(job.vacancyCount) : 'N/A';
-                        const agencyName = agency ? sanitize(agency.agencyName) : '<span class="text-gray-400 italic">Purged Row Agency Record</span>';
-                        const licenseNo = agency ? sanitize(agency.licenseNumber) : 'N/A';
-
-                        let monthlyPkg = 'N/A';
-                        if (job) {
-                            const currency = job.currency || 'USD';
-                            const amt = job.salaryAmount || job.salary || 'N/A';
-                            monthlyPkg = `${sanitize(currency)} ${sanitize(amt)}`;
-                        }
-
-                        adminPitchesTable.innerHTML += `
-                            <tr class="hover:bg-gray-50/50 border-b border-gray-100">
-                                <td class="p-3 font-bold text-gray-900">${jobTitle}</td>
-                                <td class="p-3 text-gray-700">${jobCountry}</td>
-                                <td class="p-3 font-mono font-bold text-gray-600">${vacancies}</td>
-                                <td class="p-3 text-emerald-600 font-bold">${monthlyPkg}</td>
-                                <td class="p-3 font-semibold text-blue-900">${agencyName}</td>
-                                <td class="p-3 font-mono font-bold text-purple-700">${licenseNo}</td>
-                                <td class="p-3 text-right">
-                                    <button onclick="deleteLineItem('${p.key}', 'wconnect_pitches')" class="bg-rose-600 text-white hover:bg-rose-700 font-bold px-2.5 py-1 rounded transition text-[11px] shadow-xs"><i class="fa-solid fa-trash-can"></i> Delete</button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                }
-            }
+                feedContainer.appendChild(card);
+            });
         }
 
-// ── Forgot Password ───────────────────────────────────────────
-async function handleForgotPassword(role) {
-    const emailFieldId = role === 'client' ? 'loginClientEmail' : 'loginAgentEmail';
-    const typedEmail   = document.getElementById(emailFieldId).value.trim();
-
-    // Pre-fill from login field if already typed, otherwise prompt
-    const email = typedEmail || prompt("Enter your registered email address:");
-    if (!email) return;
-
-    const { error } = await _supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + window.location.pathname + '?reset=true'
-    });
-
-    if (error) {
-        alert("Password reset failed: " + error.message);
-    } else {
-        alert("Password reset email sent! Please check your inbox and click the link to set a new password.");
-    }
-}
-
-// ── Handle password reset redirect ───────────────────────────
-async function handlePasswordReset() {
-    const newPassword = prompt("Enter your new password (minimum 6 characters):");
-    if (!newPassword || newPassword.length < 6) {
-        alert("Password must be at least 6 characters.");
-        return;
-    }
-    const confirm = prompt("Confirm your new password:");
-    if (newPassword !== confirm) {
-        alert("Passwords do not match. Please try again.");
-        return;
-    }
-
-    const { error } = await _supabase.auth.updateUser({ password: newPassword });
-    if (error) {
-        alert("Password update failed: " + error.message);
-    } else {
-        await _supabase.auth.signOut();
-        alert("Password updated successfully! Please log in with your new password.");
-        switchRole('landing');
-    }
-}        
-
-// ── Boot sequence ─────────────────────────────────────────────
-(async function boot() {
-    await refreshAll();
-
-    // Detect password reset redirect from email link
-    const { data: { session } } = await _supabase.auth.getSession();
-    const urlParams  = new URLSearchParams(window.location.search);
-    const hashParams = new URLSearchParams(window.location.hash.replace('#', '?'));
-    const isRecovery = hashParams.get('type') === 'recovery' || urlParams.get('reset') === 'true';
-
-    if (isRecovery && session) {
-        try { history.replaceState('', document.title, window.location.pathname); } catch(e) {}
-        await handlePasswordReset();
-        return;
-    }
-
-    // Detect #admin hash in URL
-    const isAdmin = window.location.hash === '#admin';
-    if (isAdmin) {
-        try { history.replaceState('', document.title, window.location.pathname); } catch(e) {}
-        switchRole('landing'); // show landing first
-        await handleAdminLogin();
-        return;
-    }
-
-    const restored = await restoreSession();
-    if (!restored) {
-        switchRole('landing');
-    }
-
-    setInterval(async function() {
-        await refreshAll();
-    }, 5000);
-})();
-
-package com.connect.portal.joborder;
-
-import lombok.Data;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicLong;
-
-/**
- * ============================================================================
- * 1. BACKEND ENTERPRISE DATA STRUCTURE DTO MODELS
- * ============================================================================
- */
-
-@Data
-class JobOrderRequest {
-    private String workCountry;
-    private LocalDate projectDeadline;
-    private List<JobLineItem> lineItems = new ArrayList<>();
-}
-
-@Data
-class JobLineItem {
-    private String jobCategory;
-    private Integer quantity;
-    private Double salary;
-    private String currency;
-    private Integer workingHoursPerDay;
-    private Integer workingDaysPerWeek;
-    private String ot;
-    private String foodAllowance;
-    private String accommodation;
-    private String medicalInsurance;
-    private String visa;
-    private String ticket;
-}
-
-@Data
-class JobOrderResponse {
-    private String referenceNumber; // E.g., "Connect-1001"
-    private LocalDate postingDate;
-    private String workCountry;
-    private LocalDate projectDeadline;
-    private Integer totalQuantityNeeded;
-    private List<JobLineItem> lineItems;
-    private Integer interestedAgencies;
-    private String workflowStatus;
-}
-
-@Data
-class DashboardMetricsDTO {
-    private long totalJobOrders;
-    private long totalActiveVacancies;
-}
-
-/**
- * ============================================================================
- * 2. DATA PROCESSING SERVICES REPOSITORY CORE LAYER
- * ============================================================================
- */
-class JobOrderService {
-    // Concurrent memory matrix simulating dynamic cross-profile persistent data arrays
-    private final List<JobOrderResponse> databasePersistenceStorage = new CopyOnWriteArrayList<>();
-    // Sequential counter engine shared across all active client enterprise accounts
-    private final AtomicLong referenceSequenceGenerator = new AtomicLong(1001);
-
-    public JobOrderResponse processAndPublishOrder(JobOrderRequest request) {
-        if (request.getLineItems() == null || request.getLineItems().isEmpty()) {
-            throw new IllegalArgumentException("Staged allocation manifest requires at least 1 Line Item config mapping.");
+        function applyForJobOrder(index, buttonObj) {
+            globalJobOrderDatabase[index].interestedAgencies += 1;
+            buttonObj.disabled = true;
+            buttonObj.innerHTML = `<i class="fa-solid fa-circle-check"></i> Sourcing Interest Expressed`;
+            buttonObj.className = "flex-1 bg-gray-100 text-gray-400 text-xs font-bold py-2 rounded-lg cursor-not-allowed text-center";
+            showToastMessage("Corporate recruitment sourcing application transmitted successfully.", "success");
+            renderMainArchiveTable();
         }
 
-        // Cumulative quantity summation map arithmetic
-        int combinedVacanciesSum = request.getLineItems().stream()
-                .mapToInt(JobLineItem::getQuantity)
-                .sum();
-
-        // Instantiate final historical uneditable specification payload structures
-        JobOrderResponse record = new JobOrderResponse();
-        record.setReferenceNumber("Connect-" + referenceSequenceGenerator.getAndIncrement());
-        record.setPostingDate(LocalDate.now());
-        record.setWorkCountry(request.getWorkCountry());
-        record.setProjectDeadline(request.getProjectDeadline());
-        record.setTotalQuantityNeeded(combinedVacanciesSum);
-        record.setLineItems(request.getLineItems());
-        record.setInterestedAgencies(0);
-        record.setWorkflowStatus("Active Database Processing");
-
-        databasePersistenceStorage.add(record);
-        return record;
-    }
-
-    public List<JobOrderResponse> getAllActiveOrders() {
-        return databasePersistenceStorage;
-    }
-
-    public DashboardMetricsDTO calculateSummaryKPIs() {
-        long grandTotalVacanciesSum = databasePersistenceStorage.stream()
-                .mapToLong(JobOrderResponse::getTotalQuantityNeeded)
-                .sum();
-
-        DashboardMetricsDTO metrics = new DashboardMetricsDTO();
-        metrics.setTotalJobOrders(databasePersistenceStorage.size());
-        metrics.setTotalActiveVacancies(grandTotalVacanciesSum);
-        return metrics;
-    }
-}
-
-/**
- * ============================================================================
- * 3. ENTERPRISE REST CONTROLLER LAYER WRAPPER
- * ============================================================================
- */
-@RestController
-@RequestMapping("/api/v1/workspace/employer/job-orders")
-@CrossOrigin(origins = "*") // Global integration proxy access mapping context
-public class JobOrderController {
-
-    private final JobOrderService jobOrderService = new JobOrderService();
-
-    @PostMapping("/publish")
-    public ResponseEntity<JobOrderResponse> publishJobOrder(@RequestBody JobOrderRequest payload) {
-        try {
-            JobOrderResponse outputRecord = jobOrderService.processAndPublishOrder(payload);
-            return ResponseEntity.ok(outputRecord);
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().build();
+        // ============================================================
+        // AUXILIARY UTILITY INTERFACE WIDGETS
+        // ============================================================
+        function toggleEditProfile(type) {
+            const container = document.getElementById(`${type}-edit-form-container`);
+            if (container) container.classList.toggle('hidden');
         }
-    }
 
-    @GetMapping("/archive")
-    public ResponseEntity<List<JobOrderResponse>> getJobOrdersArchiveLog() {
-        return ResponseEntity.ok(jobOrderService.getAllActiveOrders());
-    }
+        function saveProfileChanges(type) {
+            showToastMessage("Corporate profile adjustments saved.", "success");
+            toggleEditProfile(type);
+        }
 
-    @GetMapping("/kpis-summary")
-    public ResponseEntity<DashboardMetricsDTO> getDashboardKPIs() {
-        return ResponseEntity.ok(jobOrderService.calculateSummaryKPIs());
-    }
-}        
+        function showToastMessage(messageText, variant = "info") {
+            const toast = document.getElementById('app-toast');
+            const messageSpan = document.getElementById('toast-message');
+            messageSpan.innerText = messageText;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 4000);
+        }
     </script>
 </body>
 </html>
