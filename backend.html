@@ -22,7 +22,7 @@
             }
             .page-wrapper {
                 height: 100vh;
-                overflow: hidden;
+                overflow: clip;
             }
             body.is-logged-in .main-container {
                 height: calc(100vh - 3.5rem);
@@ -541,338 +541,7 @@
         </div>
 
 <footer id="public-footer" class="bg-blue-950 h-10 border-t border-indigo-900 shrink-0 z-50">
-</footer>        
-    <div id="clientSignupModal" class="fixed inset-0 bg-black/60 hidden z-50 items-center justify-center p-2 backdrop-blur-xs">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden flex flex-col mx-auto my-auto max-h-[95vh]">
-            <div class="bg-blue-900 text-white p-3 flex justify-between items-center shrink-0">
-                <h3 class="font-bold text-xs sm:text-sm tracking-wide"><i class="fa-solid fa-building-user mr-2"></i>Employer Onboarding</h3>
-                <button onclick="closeModal('clientSignupModal')" class="text-blue-200 hover:text-white text-xl font-semibold leading-none">&times;</button>
-            </div>
-            <form id="clientSignupForm" onsubmit="handleClientSignup(event)" class="p-3 space-y-2 text-xs overflow-y-auto">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Employer Name</label>
-                    <input type="text" id="signupCompanyName" required placeholder="" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Employer City</label>
-                        <input type="text" id="signupCity" required placeholder="" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Employer Country</label>
-                        <select id="signupCountry" required class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
-                            <option value="" disabled selected>Select Country</option>
-                            <option value="Australia">Australia</option>
-                            <option value="Bahrain">Bahrain</option>
-                            <option value="Canada">Canada</option>
-                            <option value="China">China</option>
-                            <option value="France">France</option>
-                            <option value="Germany">Germany</option>
-                            <option value="Hongkong">Hongkong</option>
-                            <option value="India">India</option>
-                            <option value="Israel">Israel</option>
-                            <option value="Italy">Italy</option>
-                            <option value="Kuwait">Kuwait</option>
-                            <option value="Malaysia">Malaysia</option>
-                            <option value="Oman">Oman</option>
-                            <option value="Poland">Poland</option>
-                            <option value="Qatar">Qatar</option>
-                            <option value="Romania">Romania</option>
-                            <option value="Russia">Russia</option>
-                            <option value="Saudi Arabia">Saudi Arabia</option>
-                            <option value="Serbia">Serbia</option>
-                            <option value="Singapore">Singapore</option>
-                            <option value="UK">UK</option>
-                            <option value="United Arab Emirates">United Arab Emirates</option>
-                            <option value="USA">USA</option>
-                        </select>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Employer Email</label>
-                    <input type="email" id="signupEmail" required placeholder="" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Secure Password</label>
-                    <input type="password" id="signupPassword" required placeholder="********" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
-                </div>
-                <div class="grid grid-cols-3 gap-2">
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Country Code</label>
-                        <select id="signupPhoneCode" required class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50 font-mono text-[11px]">
-                            <option value="" disabled selected>Select Country</option>
-                            <option value="+61">Australia (+61)</option>
-                            <option value="+973">Bahrain (+973)</option>
-                            <option value="+1">Canada (+1)</option>
-                            <option value="+86">China (+86)</option>
-                            <option value="+33">France (+33)</option>
-                            <option value="+49">Germany (+49)</option>
-                            <option value="+852">Hongkong (+852)</option>
-                            <option value="+91">India (+91)</option>
-                            <option value="+972">Israel (+972)</option>
-                            <option value="+39">Italy (+39)</option>
-                            <option value="+965">Kuwait (+965)</option>
-                            <option value="+60">Malaysia (+60)</option>
-                            <option value="+968">Oman (+968)</option>
-                            <option value="+48">Poland (+48)</option>
-                            <option value="+974">Qatar (+974)</option>
-                            <option value="+40">Romania (+40)</option>
-                            <option value="+7">Russia (+7)</option>
-                            <option value="+966">Saudi Arabia (+966)</option>
-                            <option value="+381">Serbia (+381)</option>
-                            <option value="+65">Singapore (+65)</option>
-                            <option value="+44">UK (+44)</option>
-                            <option value="+971">United Arab Emirates (+971)</option>
-                            <option value="+1">USA (+1)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Employer Landline</label>
-                        <input type="tel" id="signupPhone" required placeholder="" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Ext</label>
-                        <input type="text" id="signupExt" placeholder="" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
-                    </div>
-                </div>
-                <div class="grid grid-cols-3 gap-2">
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Country Code</label>
-                        <select id="signupMobileCode" required class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50 font-mono text-[11px]">
-                            <option value="" disabled selected>Select Country</option>
-                            <option value="+61">Australia (+61)</option>
-                            <option value="+973">Bahrain (+973)</option>
-                            <option value="+86">China (+86)</option>
-                            <option value="+33">France (+33)</option>
-                            <option value="+49">Germany (+49)</option>
-                            <option value="+852">Hongkong (+852)</option>
-                            <option value="+91">India (+91)</option>
-                            <option value="+972">Israel (+972)</option>
-                            <option value="+39">Italy (+39)</option>
-                            <option value="+965">Kuwait (+965)</option>
-                            <option value="+60">Malaysia (+60)</option>
-                            <option value="+968">Oman (+968)</option>
-                            <option value="+48">Poland (+48)</option>
-                            <option value="+974">Qatar (+974)</option>
-                            <option value="+40">Romania (+40)</option>
-                            <option value="+7">Russia (+7)</option>
-                            <option value="+966">Saudi Arabia (+966)</option>
-                            <option value="+381">Serbia (+381)</option>
-                            <option value="+65">Singapore (+65)</option>
-                            <option value="+44">UK (+44)</option>
-                            <option value="+971">United Arab Emirates (+971)</option>
-                            <option value="+1">USA/Canada (+1)</option>
-                        </select>
-                    </div>
-                    <div class="col-span-2">
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Employer Mobile Number</label>
-                        <input type="tel" id="signupMobile" required placeholder="" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Number of Current Employees</label>
-                    <input type="number" id="signupEmployees" required placeholder="" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
-                </div>
-                <div class="flex justify-end space-x-2 pt-1.5 border-t border-gray-100 shrink-0">
-                    <button type="button" onclick="closeModal('clientSignupModal')" class="px-3 py-1.5 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 text-[11px] font-bold">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow">Onboard Employer</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="agentSignupModal" class="fixed inset-0 bg-black/60 hidden z-50 items-center justify-center p-2 backdrop-blur-xs">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden flex flex-col mx-auto my-auto max-h-[95vh]">
-            <div class="bg-blue-900 text-white p-3 flex justify-between items-center shrink-0">
-                <h3 class="font-bold text-xs sm:text-sm tracking-wide"><i class="fa-solid fa-building-user mr-2"></i>Agency Onboarding</h3>
-                <button onclick="closeModal('agentSignupModal')" class="text-blue-200 hover:text-white text-xl font-semibold leading-none">&times;</button>
-            </div>
-            <form id="agentSignupForm" onsubmit="handleAgentSignup(event)" class="p-3 space-y-2 text-xs overflow-y-auto">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Agency Name</label>
-                    <input type="text" id="agentSignupName" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">SLBFE License Number</label>
-                    <input type="text" id="agentSignupLicense" required maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="XXXX" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Agency City</label>
-                    <input type="text" id="agentSignupCity" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Agency Email</label>
-                    <input type="email" id="agentSignupEmail" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Secure Password</label>
-                    <input type="password" id="agentSignupPassword" required placeholder="********" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-                    <div class="sm:col-span-1">
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Country Code</label>
-                        <select id="agentSignupMobileCode" required class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-100 cursor-not-allowed pointer-events-none">
-                            <option value="+94" selected>+94 (SL)</option>
-                        </select>
-                    </div>
-                    <div class="sm:col-span-2">
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Agency Mobile Number</label>
-                        <input type="text" id="agentSignupMobile" required maxlength="9" minlength="9" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                    </div>
-                </div>
-                <div class="flex justify-end space-x-2 pt-2 border-t border-gray-100 shrink-0">
-                    <button type="button" onclick="closeModal('agentSignupModal')" class="px-3.5 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-xs font-bold">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow">Onboard Agency</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="clientLoginModal" class="fixed inset-0 bg-black/60 hidden z-50 items-center justify-center p-3 sm:p-4 backdrop-blur-xs">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden flex flex-col mx-auto">
-            <div class="bg-blue-900 text-white p-4 flex justify-between items-center">
-                <h3 class="font-bold text-sm sm:text-base tracking-wide">Employer Login Here</h3>
-                <button onclick="closeModal('clientLoginModal')" class="text-blue-200 hover:text-white text-2xl font-semibold leading-none">&times;</button>
-            </div>
-            <form id="clientLoginForm" onsubmit="executeLogin(event, 'client')" class="p-4 space-y-4 text-xs sm:text-sm">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Registered Employer Email</label>
-                    <input type="email" id="loginClientEmail" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Secure Password</label>
-                    <input type="password" id="loginClientPassword" required placeholder="********" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                </div>
-                  <p class="text-right mt-1">
-                    <a href="#" onclick="handleForgotPassword('client')" class="text-[11px] text-blue-700 hover:underline font-medium">Forgot Password?</a>
-                </p>
-                <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition shadow border-b-4 border-emerald-800 active:border-b-0 tracking-wider">
-                    Authenticate Employer Sign In
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <div id="agentLoginModal" class="fixed inset-0 bg-black/60 hidden z-50 items-center justify-center p-3 sm:p-4 backdrop-blur-xs">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden flex flex-col mx-auto">
-            <div class="bg-blue-900 text-white p-4 flex justify-between items-center">
-                <h3 class="font-bold text-sm sm:text-base tracking-wide">Agency Login Here</h3>
-                <button onclick="closeModal('agentLoginModal')" class="text-emerald-100 hover:text-white text-2xl font-semibold leading-none">&times;</button>
-            </div>
-            <form id="agentLoginForm" onsubmit="executeLogin(event, 'agent')" class="p-4 space-y-4 text-xs sm:text-sm">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Registered Agency Email</label>
-                    <input type="email" id="loginAgentEmail" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Secure Password</label>
-                    <input type="password" id="loginAgentPassword" required placeholder="********" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                </div>
-                <p class="text-right mt-1">
-                    <a href="#" onclick="handleForgotPassword('agent')" class="text-[11px] text-blue-700 hover:underline font-medium">Forgot Password?</a>
-                </p>
-                <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition shadow border-b-4 border-emerald-800 active:border-b-0 tracking-wider">
-                    Authenticate Agency Sign In
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <div id="jobModal" class="fixed inset-0 bg-black/60 hidden z-50 items-center justify-center p-3 backdrop-blur-xs">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden flex flex-col mx-auto max-h-[90vh]">
-            <div class="bg-blue-900 text-white p-4 flex justify-between items-center">
-                <h3 class="font-bold text-sm sm:text-base tracking-wide"><i class="fa-solid fa-file-invoice-dollar mr-2"></i>Job Order Details</h3>
-                <button onclick="closeModal('jobModal')" class="text-blue-200 hover:text-white text-2xl font-semibold leading-none">&times;</button>
-            </div>
-            <form id="jobForm" onsubmit="handleJobPost(event)" class="p-4 space-y-3.5 text-xs sm:text-sm overflow-y-auto">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Job Title</label>
-                    <input type="text" id="jobTitle" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Employer Country</label>
-                        <select id="jobCountry" required class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                            <option value="" disabled selected>Select Country</option>
-                            <option value="Australia">Australia</option>
-                            <option value="Bahrain">Bahrain</option>
-                            <option value="Canada">Canada</option>
-                            <option value="China">China</option>
-                            <option value="France">France</option>
-                            <option value="Germany">Germany</option>
-                            <option value="Hongkong">Hongkong</option>
-                            <option value="India">India</option>
-                            <option value="Israel">Israel</option>
-                            <option value="Italy">Italy</option>
-                            <option value="Kuwait">Kuwait</option>
-                            <option value="Malaysia">Malaysia</option>
-                            <option value="Oman">Oman</option>
-                            <option value="Poland">Poland</option>
-                            <option value="Qatar">Qatar</option>
-                            <option value="Romania">Romania</option>
-                            <option value="Russia">Russia</option>
-                            <option value="Saudi Arabia">Saudi Arabia</option>
-                            <option value="Serbia">Serbia</option>
-                            <option value="Singapore">Singapore</option>
-                            <option value="UK">UK</option>
-                            <option value="United Arab Emirates">United Arab Emirates</option>
-                            <option value="USA">USA</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Vacancy Count (Quota)</label>
-                        <input type="number" id="jobCount" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Gross Salary / Month</label>
-                        <input type="text" id="jobSalary" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Select Currency</label>
-                        <select id="jobCurrency" required class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
-                            <option value="" disabled selected>Select Currency</option>
-                            <option value="AUD">AUD (Australian Dollar)</option>
-                            <option value="BHD">BHD (Bahraini Dinar)</option>
-                            <option value="CAD">CAD (Canadian Dollar)</option>
-                            <option value="CNY">CNY (Chinese Yuan)</option>
-                            <option value="EUR">EUR (Euro)</option>
-                            <option value="GBP">GBP (British Pound)</option>
-                            <option value="HKD">HKD (Hong Kong Dollar)</option>
-                            <option value="ILS">ILS (Israeli New Shekel)</option>
-                            <option value="INR">INR (Indian Rupee)</option>
-                            <option value="KWD">KWD (Kuwaiti Dinar)</option>
-                            <option value="MYR">MYR (Malaysian Ringgit)</option>
-                            <option value="OMR">OMR (Omani Rial)</option>
-                            <option value="PLN">PLN (Polish Zloty)</option>
-                            <option value="QAR">QAR (Qatari Riyal)</option>
-                            <option value="RON">RON (Romanian Leu)</option>
-                            <option value="RUB">RUB (Russian Ruble)</option>
-                            <option value="SAR">SAR (Saudi Riyal)</option>
-                            <option value="RSD">RSD (Serbian Dinar)</option>
-                            <option value="SGD">SGD (Singapore Dollar)</option>
-                            <option value="AED">AED (UAE Dirham)</option>
-                            <option value="USD">USD (US Dollar)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <label class="font-bold text-gray-800 block text-xs">SLBFE Approval Mandate</label>
-                            <span class="text-[11px] text-gray-500 block">Select if this job requires mandatory SLBFE Approval?</span>
-                        </div>
-                        <input type="checkbox" id="jobSlbfe" class="w-4 h-4 text-blue-900 border-gray-300 rounded shrink-0 focus:ring-blue-500 ml-2">
-                    </div>
-                </div>
-                <div class="flex justify-end space-x-2 pt-2 border-t border-gray-100">
-                    <button type="button" onclick="closeModal('jobModal')" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-bold text-xs">Cancel</button>
-                    <button type="submit" class="px-5 py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-lg font-bold text-xs shadow tracking-wide">Publish Job Order</button>
-                </div>
-            </form>
-        </div>
-    </div>
+</footer>
 
     <script>
         // ============================================================
@@ -914,11 +583,24 @@
 
         function openModal(id) {
             const modal = document.getElementById(id);
-            if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+                document.documentElement.style.overflow = 'hidden';
+            }
         }
         function closeModal(id) {
             const modal = document.getElementById(id);
-            if (modal) { modal.classList.remove('flex'); modal.classList.add('hidden'); }
+            if (modal) {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+                const anyOpen = document.querySelectorAll('[id$="Modal"].flex').length > 0;
+                if (!anyOpen) {
+                    document.body.style.overflow = '';
+                    document.documentElement.style.overflow = '';
+                }
+            }
         }
 
         // ── Admin login – passphrase checked via Supabase DB function ─
@@ -2129,5 +1811,338 @@ public class JobOrderController {
     }
 }        
     </script>
+
+<div id="clientSignupModal" class="fixed inset-0 bg-black/60 hidden z-50 items-center justify-center p-2 backdrop-blur-xs">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden flex flex-col mx-auto my-auto max-h-[95vh]">
+            <div class="bg-blue-900 text-white p-3 flex justify-between items-center shrink-0">
+                <h3 class="font-bold text-xs sm:text-sm tracking-wide"><i class="fa-solid fa-building-user mr-2"></i>Employer Onboarding</h3>
+                <button onclick="closeModal('clientSignupModal')" class="text-blue-200 hover:text-white text-xl font-semibold leading-none">&times;</button>
+            </div>
+            <form id="clientSignupForm" onsubmit="handleClientSignup(event)" class="p-3 space-y-2 text-xs overflow-y-auto">
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Employer Name</label>
+                    <input type="text" id="signupCompanyName" required placeholder="" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Employer City</label>
+                        <input type="text" id="signupCity" required placeholder="" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Employer Country</label>
+                        <select id="signupCountry" required class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
+                            <option value="" disabled selected>Select Country</option>
+                            <option value="Australia">Australia</option>
+                            <option value="Bahrain">Bahrain</option>
+                            <option value="Canada">Canada</option>
+                            <option value="China">China</option>
+                            <option value="France">France</option>
+                            <option value="Germany">Germany</option>
+                            <option value="Hongkong">Hongkong</option>
+                            <option value="India">India</option>
+                            <option value="Israel">Israel</option>
+                            <option value="Italy">Italy</option>
+                            <option value="Kuwait">Kuwait</option>
+                            <option value="Malaysia">Malaysia</option>
+                            <option value="Oman">Oman</option>
+                            <option value="Poland">Poland</option>
+                            <option value="Qatar">Qatar</option>
+                            <option value="Romania">Romania</option>
+                            <option value="Russia">Russia</option>
+                            <option value="Saudi Arabia">Saudi Arabia</option>
+                            <option value="Serbia">Serbia</option>
+                            <option value="Singapore">Singapore</option>
+                            <option value="UK">UK</option>
+                            <option value="United Arab Emirates">United Arab Emirates</option>
+                            <option value="USA">USA</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Employer Email</label>
+                    <input type="email" id="signupEmail" required placeholder="" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Secure Password</label>
+                    <input type="password" id="signupPassword" required placeholder="********" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Country Code</label>
+                        <select id="signupPhoneCode" required class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50 font-mono text-[11px]">
+                            <option value="" disabled selected>Select Country</option>
+                            <option value="+61">Australia (+61)</option>
+                            <option value="+973">Bahrain (+973)</option>
+                            <option value="+1">Canada (+1)</option>
+                            <option value="+86">China (+86)</option>
+                            <option value="+33">France (+33)</option>
+                            <option value="+49">Germany (+49)</option>
+                            <option value="+852">Hongkong (+852)</option>
+                            <option value="+91">India (+91)</option>
+                            <option value="+972">Israel (+972)</option>
+                            <option value="+39">Italy (+39)</option>
+                            <option value="+965">Kuwait (+965)</option>
+                            <option value="+60">Malaysia (+60)</option>
+                            <option value="+968">Oman (+968)</option>
+                            <option value="+48">Poland (+48)</option>
+                            <option value="+974">Qatar (+974)</option>
+                            <option value="+40">Romania (+40)</option>
+                            <option value="+7">Russia (+7)</option>
+                            <option value="+966">Saudi Arabia (+966)</option>
+                            <option value="+381">Serbia (+381)</option>
+                            <option value="+65">Singapore (+65)</option>
+                            <option value="+44">UK (+44)</option>
+                            <option value="+971">United Arab Emirates (+971)</option>
+                            <option value="+1">USA (+1)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Employer Landline</label>
+                        <input type="tel" id="signupPhone" required placeholder="" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Ext</label>
+                        <input type="text" id="signupExt" placeholder="" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Country Code</label>
+                        <select id="signupMobileCode" required class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50 font-mono text-[11px]">
+                            <option value="" disabled selected>Select Country</option>
+                            <option value="+61">Australia (+61)</option>
+                            <option value="+973">Bahrain (+973)</option>
+                            <option value="+86">China (+86)</option>
+                            <option value="+33">France (+33)</option>
+                            <option value="+49">Germany (+49)</option>
+                            <option value="+852">Hongkong (+852)</option>
+                            <option value="+91">India (+91)</option>
+                            <option value="+972">Israel (+972)</option>
+                            <option value="+39">Italy (+39)</option>
+                            <option value="+965">Kuwait (+965)</option>
+                            <option value="+60">Malaysia (+60)</option>
+                            <option value="+968">Oman (+968)</option>
+                            <option value="+48">Poland (+48)</option>
+                            <option value="+974">Qatar (+974)</option>
+                            <option value="+40">Romania (+40)</option>
+                            <option value="+7">Russia (+7)</option>
+                            <option value="+966">Saudi Arabia (+966)</option>
+                            <option value="+381">Serbia (+381)</option>
+                            <option value="+65">Singapore (+65)</option>
+                            <option value="+44">UK (+44)</option>
+                            <option value="+971">United Arab Emirates (+971)</option>
+                            <option value="+1">USA/Canada (+1)</option>
+                        </select>
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Employer Mobile Number</label>
+                        <input type="tel" id="signupMobile" required placeholder="" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Number of Current Employees</label>
+                    <input type="number" id="signupEmployees" required placeholder="" class="w-full border border-gray-300 rounded-md p-1.5 bg-gray-50/50">
+                </div>
+                <div class="flex justify-end space-x-2 pt-1.5 border-t border-gray-100 shrink-0">
+                    <button type="button" onclick="closeModal('clientSignupModal')" class="px-3 py-1.5 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 text-[11px] font-bold">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow">Onboard Employer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="agentSignupModal" class="fixed inset-0 bg-black/60 hidden z-50 items-center justify-center p-2 backdrop-blur-xs">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden flex flex-col mx-auto my-auto max-h-[95vh]">
+            <div class="bg-blue-900 text-white p-3 flex justify-between items-center shrink-0">
+                <h3 class="font-bold text-xs sm:text-sm tracking-wide"><i class="fa-solid fa-building-user mr-2"></i>Agency Onboarding</h3>
+                <button onclick="closeModal('agentSignupModal')" class="text-blue-200 hover:text-white text-xl font-semibold leading-none">&times;</button>
+            </div>
+            <form id="agentSignupForm" onsubmit="handleAgentSignup(event)" class="p-3 space-y-2 text-xs overflow-y-auto">
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Agency Name</label>
+                    <input type="text" id="agentSignupName" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">SLBFE License Number</label>
+                    <input type="text" id="agentSignupLicense" required maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="XXXX" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Agency City</label>
+                    <input type="text" id="agentSignupCity" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Agency Email</label>
+                    <input type="email" id="agentSignupEmail" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Secure Password</label>
+                    <input type="password" id="agentSignupPassword" required placeholder="********" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                    <div class="sm:col-span-1">
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Country Code</label>
+                        <select id="agentSignupMobileCode" required class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-100 cursor-not-allowed pointer-events-none">
+                            <option value="+94" selected>+94 (SL)</option>
+                        </select>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Agency Mobile Number</label>
+                        <input type="text" id="agentSignupMobile" required maxlength="9" minlength="9" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 pt-2 border-t border-gray-100 shrink-0">
+                    <button type="button" onclick="closeModal('agentSignupModal')" class="px-3.5 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-xs font-bold">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow">Onboard Agency</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="clientLoginModal" class="fixed inset-0 bg-black/60 hidden z-50 items-center justify-center p-3 sm:p-4 backdrop-blur-xs">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden flex flex-col mx-auto">
+            <div class="bg-blue-900 text-white p-4 flex justify-between items-center">
+                <h3 class="font-bold text-sm sm:text-base tracking-wide">Employer Login Here</h3>
+                <button onclick="closeModal('clientLoginModal')" class="text-blue-200 hover:text-white text-2xl font-semibold leading-none">&times;</button>
+            </div>
+            <form id="clientLoginForm" onsubmit="executeLogin(event, 'client')" class="p-4 space-y-4 text-xs sm:text-sm">
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Registered Employer Email</label>
+                    <input type="email" id="loginClientEmail" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Secure Password</label>
+                    <input type="password" id="loginClientPassword" required placeholder="********" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
+                </div>
+                  <p class="text-right mt-1">
+                    <a href="#" onclick="handleForgotPassword('client')" class="text-[11px] text-blue-700 hover:underline font-medium">Forgot Password?</a>
+                </p>
+                <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition shadow border-b-4 border-emerald-800 active:border-b-0 tracking-wider">
+                    Authenticate Employer Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="agentLoginModal" class="fixed inset-0 bg-black/60 hidden z-50 items-center justify-center p-3 sm:p-4 backdrop-blur-xs">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden flex flex-col mx-auto">
+            <div class="bg-blue-900 text-white p-4 flex justify-between items-center">
+                <h3 class="font-bold text-sm sm:text-base tracking-wide">Agency Login Here</h3>
+                <button onclick="closeModal('agentLoginModal')" class="text-emerald-100 hover:text-white text-2xl font-semibold leading-none">&times;</button>
+            </div>
+            <form id="agentLoginForm" onsubmit="executeLogin(event, 'agent')" class="p-4 space-y-4 text-xs sm:text-sm">
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Registered Agency Email</label>
+                    <input type="email" id="loginAgentEmail" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Secure Password</label>
+                    <input type="password" id="loginAgentPassword" required placeholder="********" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
+                </div>
+                <p class="text-right mt-1">
+                    <a href="#" onclick="handleForgotPassword('agent')" class="text-[11px] text-blue-700 hover:underline font-medium">Forgot Password?</a>
+                </p>
+                <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition shadow border-b-4 border-emerald-800 active:border-b-0 tracking-wider">
+                    Authenticate Agency Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="jobModal" class="fixed inset-0 bg-black/60 hidden z-50 items-center justify-center p-3 backdrop-blur-xs">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden flex flex-col mx-auto max-h-[90vh]">
+            <div class="bg-blue-900 text-white p-4 flex justify-between items-center">
+                <h3 class="font-bold text-sm sm:text-base tracking-wide"><i class="fa-solid fa-file-invoice-dollar mr-2"></i>Job Order Details</h3>
+                <button onclick="closeModal('jobModal')" class="text-blue-200 hover:text-white text-2xl font-semibold leading-none">&times;</button>
+            </div>
+            <form id="jobForm" onsubmit="handleJobPost(event)" class="p-4 space-y-3.5 text-xs sm:text-sm overflow-y-auto">
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Job Title</label>
+                    <input type="text" id="jobTitle" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Employer Country</label>
+                        <select id="jobCountry" required class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
+                            <option value="" disabled selected>Select Country</option>
+                            <option value="Australia">Australia</option>
+                            <option value="Bahrain">Bahrain</option>
+                            <option value="Canada">Canada</option>
+                            <option value="China">China</option>
+                            <option value="France">France</option>
+                            <option value="Germany">Germany</option>
+                            <option value="Hongkong">Hongkong</option>
+                            <option value="India">India</option>
+                            <option value="Israel">Israel</option>
+                            <option value="Italy">Italy</option>
+                            <option value="Kuwait">Kuwait</option>
+                            <option value="Malaysia">Malaysia</option>
+                            <option value="Oman">Oman</option>
+                            <option value="Poland">Poland</option>
+                            <option value="Qatar">Qatar</option>
+                            <option value="Romania">Romania</option>
+                            <option value="Russia">Russia</option>
+                            <option value="Saudi Arabia">Saudi Arabia</option>
+                            <option value="Serbia">Serbia</option>
+                            <option value="Singapore">Singapore</option>
+                            <option value="UK">UK</option>
+                            <option value="United Arab Emirates">United Arab Emirates</option>
+                            <option value="USA">USA</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Vacancy Count (Quota)</label>
+                        <input type="number" id="jobCount" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Gross Salary / Month</label>
+                        <input type="text" id="jobSalary" required placeholder="" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Select Currency</label>
+                        <select id="jobCurrency" required class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50/50">
+                            <option value="" disabled selected>Select Currency</option>
+                            <option value="AUD">AUD (Australian Dollar)</option>
+                            <option value="BHD">BHD (Bahraini Dinar)</option>
+                            <option value="CAD">CAD (Canadian Dollar)</option>
+                            <option value="CNY">CNY (Chinese Yuan)</option>
+                            <option value="EUR">EUR (Euro)</option>
+                            <option value="GBP">GBP (British Pound)</option>
+                            <option value="HKD">HKD (Hong Kong Dollar)</option>
+                            <option value="ILS">ILS (Israeli New Shekel)</option>
+                            <option value="INR">INR (Indian Rupee)</option>
+                            <option value="KWD">KWD (Kuwaiti Dinar)</option>
+                            <option value="MYR">MYR (Malaysian Ringgit)</option>
+                            <option value="OMR">OMR (Omani Rial)</option>
+                            <option value="PLN">PLN (Polish Zloty)</option>
+                            <option value="QAR">QAR (Qatari Riyal)</option>
+                            <option value="RON">RON (Romanian Leu)</option>
+                            <option value="RUB">RUB (Russian Ruble)</option>
+                            <option value="SAR">SAR (Saudi Riyal)</option>
+                            <option value="RSD">RSD (Serbian Dinar)</option>
+                            <option value="SGD">SGD (Singapore Dollar)</option>
+                            <option value="AED">AED (UAE Dirham)</option>
+                            <option value="USD">USD (US Dollar)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <label class="font-bold text-gray-800 block text-xs">SLBFE Approval Mandate</label>
+                            <span class="text-[11px] text-gray-500 block">Select if this job requires mandatory SLBFE Approval?</span>
+                        </div>
+                        <input type="checkbox" id="jobSlbfe" class="w-4 h-4 text-blue-900 border-gray-300 rounded shrink-0 focus:ring-blue-500 ml-2">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 pt-2 border-t border-gray-100">
+                    <button type="button" onclick="closeModal('jobModal')" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-bold text-xs">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-lg font-bold text-xs shadow tracking-wide">Publish Job Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </body>
 </html>
