@@ -1,2 +1,2 @@
 # weconnectkrish
-We connect Employers &amp; Recruitment Agencies
+We connect Employers &amp; Recruitment Agencie
