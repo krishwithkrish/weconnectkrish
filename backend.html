@@ -1854,6 +1854,10 @@ function closeModal(modalId) {
 
 // Logic helper to manage form visual state inside the modal
 function resetJobOrderFormState() {
+    // Reset staged items list
+    stagedLineItems = [];
+    renderStagedLineItems();
+
     // Hide the 14-field spec form until they click "Add New Job"
     const lineItemForm = document.getElementById('dynamicLineItemForm');
     if (lineItemForm) lineItemForm.classList.add('hidden');
@@ -1864,6 +1868,127 @@ function resetJobOrderFormState() {
 }
 
 // Function tied to the "Add New Job" button inside the modal
+// ── Staged line items state ───────────────────────────────────
+let stagedLineItems = [];
+
+// ── Add current form values to staged list ───────────────────
+function addCurrentJobToList() {
+    const category     = document.getElementById('jobFieldCategory').value.trim();
+    const quantity     = parseInt(document.getElementById('jobFieldQuantity').value);
+    const salary       = document.getElementById('jobFieldSalary').value.trim();
+    const currency     = document.getElementById('jobFieldCurrency').value;
+    const hours        = document.getElementById('jobFieldHours').value;
+    const days         = document.getElementById('jobFieldDays').value;
+    const ot           = document.getElementById('jobFieldOT').value;
+    const food         = document.getElementById('jobFieldFood').value;
+    const accommodation = document.getElementById('jobFieldAccommodation').value;
+    const medical      = document.getElementById('jobFieldMedical').value;
+    const visa         = document.getElementById('jobFieldVisa').value;
+    const ticket       = document.getElementById('jobFieldTicket').value;
+
+    if (!category)          { alert('Please enter a Job Category.');   return; }
+    if (!quantity || quantity < 1) { alert('Please enter a valid Quantity.'); return; }
+    if (!salary)            { alert('Please enter a Base Salary.');     return; }
+    if (!currency)          { alert('Please select a Currency.');       return; }
+
+    stagedLineItems.push({ category, quantity, salary, currency, hours, days, ot, food, accommodation, medical, visa, ticket });
+
+    renderStagedLineItems();
+    hideLineItemForm();
+
+    document.getElementById('btnPublishJobOrder').classList.remove('hidden');
+}
+
+// ── Re-render the staged items table ────────────────────────
+function renderStagedLineItems() {
+    const tbody = document.getElementById('staged-line-items-tbody');
+    const badge = document.getElementById('staged-count-badge');
+
+    badge.textContent = stagedLineItems.length + ' Item' + (stagedLineItems.length !== 1 ? 's' : '') + ' Loaded';
+
+    if (stagedLineItems.length === 0) {
+        tbody.innerHTML = '<tr id="empty-stage-row"><td colspan="7" class="p-8 text-center text-gray-400 italic font-medium">No requirements added to line items list yet. Fill fields configuration above and select \'Add To List\'.</td></tr>';
+        document.getElementById('btnPublishJobOrder').classList.add('hidden');
+        return;
+    }
+
+    tbody.innerHTML = '';
+    stagedLineItems.forEach(function(item, i) {
+        const perkLabels = ['OT', 'Food', 'Accom', 'Medical', 'Visa', 'Ticket'];
+        const perkValues = [item.ot, item.food, item.accommodation, item.medical, item.visa, item.ticket];
+        const perks = perkLabels.map(function(label, idx) {
+            const isYes = perkValues[idx] === 'Yes' || perkValues[idx] === '1 Way Only';
+            const style = isYes ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-400';
+            return '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold ' + style + '">' + label + ': ' + perkValues[idx] + '</span>';
+        }).join(' ');
+
+        tbody.innerHTML += '<tr class="hover:bg-gray-50/40 transition">' +
+            '<td class="p-2.5 pl-4 font-mono text-gray-500">#' + (i + 1) + '</td>' +
+            '<td class="p-2.5 font-bold text-gray-900">' + item.category + '</td>' +
+            '<td class="p-2.5 text-center font-mono font-bold text-blue-900">' + item.quantity + '</td>' +
+            '<td class="p-2.5 font-bold text-emerald-600">' + item.currency + ' ' + item.salary + '</td>' +
+            '<td class="p-2.5 text-center text-gray-600">' + item.hours + 'h / ' + item.days + 'd</td>' +
+            '<td class="p-2.5"><div class="flex flex-wrap gap-1">' + perks + '</div></td>' +
+            '<td class="p-2.5 text-center pr-4"><button onclick="removeStagedItem(' + i + ')" class="text-rose-500 hover:text-rose-700 font-bold text-[11px]"><i class="fa-solid fa-trash-can"></i></button></td>' +
+            '</tr>';
+    });
+}
+
+// ── Remove one staged item by index ─────────────────────────
+function removeStagedItem(index) {
+    stagedLineItems.splice(index, 1);
+    renderStagedLineItems();
+}
+
+// ── Publish all staged items to Supabase ─────────────────────
+async function commitPublishJobOrderRequest() {
+    const workCountry = document.getElementById('commonWorkCountry').value;
+    const deadline    = document.getElementById('commonProjectDeadline').value;
+
+    if (!workCountry)               { alert('Please select a Work Country.'); return; }
+    if (!deadline)                  { alert('Please select a Project Deadline.'); return; }
+    if (stagedLineItems.length === 0) { alert('Please add at least one line item before publishing.'); return; }
+
+    const btn = document.getElementById('btnPublishJobOrder');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i>Publishing...';
+
+    try {
+        for (const item of stagedLineItems) {
+            const payload = {
+                employer_id:   sessionUser.id,
+                employer_name: sessionUser.companyName,
+                title:         item.category,
+                country:       workCountry,
+                vacancy_count: item.quantity,
+                salary_amount: item.salary,
+                currency:      item.currency,
+                slbfe_required: false,
+                status:        'PENDING'
+            };
+            const { error } = await _supabase.from('jobs').insert([payload]);
+            if (error) {
+                alert('Publish failed: ' + error.message);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up mr-1.5"></i>Publish Job Order';
+                return;
+            }
+        }
+        await fetchTable('wconnect_jobs');
+        stagedLineItems = [];
+        renderStagedLineItems();
+        closeModal('jobModal');
+        renderAllViews();
+        alert('Job Order published successfully!');
+    } catch(err) {
+        alert('Unexpected error: ' + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up mr-1.5"></i>Publish Job Order';
+    }
+}
+
+
 function showLineItemForm() {
     const lineItemForm = document.getElementById('dynamicLineItemForm');
     if (lineItemForm) {
