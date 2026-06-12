@@ -171,7 +171,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+    <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6">
         <div class="bg-white p-4 rounded-xl shadow-xs border border-gray-200 flex flex-col justify-center">
             <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Your Total Job Orders</p>
             <p class="text-xl sm:text-2xl font-bold text-gray-900 mt-0.5" id="client-total-orders">0</p>
@@ -179,14 +179,6 @@
         <div class="bg-white p-4 rounded-xl shadow-xs border border-gray-200 flex flex-col justify-center">
             <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Total Active Vacancies</p>
             <p class="text-xl sm:text-2xl font-bold text-emerald-600 mt-0.5" id="client-active-vacancies">0</p>
-        </div>
-        <div class="bg-white p-4 rounded-xl shadow-xs border border-blue-200 flex flex-col justify-center">
-            <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Your Active Job Orders</p>
-            <p class="text-xl sm:text-2xl font-bold text-blue-700 mt-0.5" id="client-active-orders">0</p>
-        </div>
-        <div class="bg-white p-4 rounded-xl shadow-xs border border-purple-200 flex flex-col justify-center">
-            <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Your Completed Job Orders</p>
-            <p class="text-xl sm:text-2xl font-bold text-purple-700 mt-0.5" id="client-completed-orders">0</p>
         </div>
         <div class="hidden" id="client-pitches-count"></div>
     </div>
@@ -409,7 +401,7 @@
                         <th class="p-3">Posting Date</th>
                         <th class="p-3 text-center">Total Quantity Needed</th>
                         <th class="p-3">Deadline</th>
-                        <th class="p-3 text-center">Specifications Sheet</th>
+                        <th class="p-3 text-center">View Job Order</th>
                         <th class="p-3">Work Country</th>
                         <th class="p-3">Interested Agencies</th>
                         <th class="p-3">Workflow Status</th>
@@ -429,7 +421,7 @@
             <div>
                 <div class="flex items-center space-x-2">
                     <span class="text-xs font-mono uppercase bg-blue-800 text-blue-200 px-2 py-0.5 rounded font-bold" id="lblSheetRefNo">CONNECT-XXXX</span>
-                    <h3 class="text-base font-bold">Uneditable Manifest Specifications Sheet</h3>
+                    <h3 class="text-base font-bold">View Job Order Details</h3>
                 </div>
                 <p class="text-[11px] text-gray-300 mt-0.5">Historical verification view for corporate workflow execution requirements</p>
             </div>
@@ -504,7 +496,7 @@
                             <table class="w-full text-left border-collapse text-xs min-w-[600px]">
                                 <thead>
                                     <tr class="bg-gray-50 border-b border-gray-200 text-[10px] font-bold uppercase tracking-wider text-gray-500">
-                                        <th class="p-3">Job Order Reference</th><th class="p-3">Posting Date</th><th class="p-3">Deadline</th><th class="p-3">Employer Name</th><th class="p-3">Work Country</th><th class="p-3 text-center">Total Qty Needed</th><th class="p-3 text-center">View Sheet</th><th class="p-3">Job Status</th><th class="p-3">Delete Request</th><th class="p-3 text-center">Complete Project</th><th class="p-3 text-right">Action Controls</th>
+                                        <th class="p-3">Job Order Reference</th><th class="p-3">Posting Date</th><th class="p-3">Deadline</th><th class="p-3">Employer Name</th><th class="p-3">Work Country</th><th class="p-3 text-center">Total Qty Needed</th><th class="p-3 text-center">View Job Order</th><th class="p-3">Job Status</th><th class="p-3">Delete Request</th><th class="p-3 text-right">Action Controls</th>
                                     </tr>
                                 </thead>
                                 <tbody id="admin-job-table" class="divide-y divide-gray-100"></tbody>
@@ -1399,7 +1391,8 @@ async function executeFinalAdminDelete(jobId) {
             const jobs = getStorage('wconnect_jobs');
             const job  = jobs.find(j => j.id === jobId);
             if (!job) return;
-            const newStatus = (job.status === 'APPROVED' || job.status === 'COMPLETED') ? 'PENDING' : 'APPROVED';
+            // COMPLETED → reopen to PENDING; APPROVED → PENDING; PENDING/other → APPROVED
+            const newStatus = (job.status === 'APPROVED') ? 'PENDING' : (job.status === 'COMPLETED') ? 'PENDING' : 'APPROVED';
             const { error } = await _supabase.from('jobs').update({ status: newStatus }).eq('id', jobId);
             if (error) { alert('Update failed: ' + error.message); return; }
             await fetchTable('wconnect_jobs');
@@ -1407,15 +1400,7 @@ async function executeFinalAdminDelete(jobId) {
         }
 
         async function markJobCompleted(jobId) {
-            const jobs = getStorage('wconnect_jobs');
-            const job  = jobs.find(j => j.id === jobId);
-            if (!job) return;
-            const refLabel = job.refNo || job.id;
-            // OK/Cancel confirmation dialog
-            const confirmed = window.confirm(
-                `Confirm Project Completion\n\nJob Order: ${refLabel}\nEmployer: ${job.employerName || '—'}\n\nThis will mark the project as "Completed" in both the Job Router and the Employer's Workflow Status.\n\nClick OK to confirm, or Cancel to abort.`
-            );
-            if (!confirmed) return;
+            if (!confirm("Mark this job order as Completed? This will disable employer actions for this order.")) return;
             const { error } = await _supabase.from('jobs').update({ status: 'COMPLETED' }).eq('id', jobId);
             if (error) { alert('Update failed: ' + error.message); return; }
             await fetchTable('wconnect_jobs');
@@ -1572,8 +1557,6 @@ async function executeFinalAdminDelete(jobId) {
                         : parseInt(curr.totalQty || curr.vacancyCount || 0);
                     return acc + qty;
                 }, 0);
-                document.getElementById('client-active-orders').innerText = myJobs.filter(j => j.status === 'APPROVED').length;
-                document.getElementById('client-completed-orders').innerText = myJobs.filter(j => j.status === 'COMPLETED').length;
                 
                 const myJobIds = myJobs.map(j => j.id);
                 const relatedPitchesCount = pitches.filter(p => myJobIds.includes(p.jobId)).length;
@@ -1592,10 +1575,10 @@ async function executeFinalAdminDelete(jobId) {
                         let statusBadge = '';
                         if (job.status === 'APPROVED') {
                             statusBadge = '<span class="bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold px-2 py-0.5 rounded text-[10px] tracking-wide uppercase shadow-2xs">Live Open</span>';
+                        } else if (job.status === 'COMPLETED') {
+                            statusBadge = '<span class="bg-blue-100 text-blue-800 border border-blue-200 font-bold px-2 py-0.5 rounded text-[10px] tracking-wide uppercase shadow-2xs">Completed</span>';
                         } else if (job.status === 'DELETE_REQUESTED') {
                             statusBadge = '<span class="bg-rose-100 text-rose-700 border border-rose-200 font-bold px-2 py-0.5 rounded text-[10px] tracking-wide uppercase animate-pulse">Pending Removal</span>';
-                        } else if (job.status === 'COMPLETED') {
-                            statusBadge = '<span class="bg-purple-100 text-purple-800 border border-purple-200 font-bold px-2 py-0.5 rounded text-[10px] tracking-wide uppercase shadow-2xs">Completed</span>';
                         } else {
                             statusBadge = '<span class="bg-amber-100 text-amber-800 border border-amber-200 font-bold px-2 py-0.5 rounded text-[10px] tracking-wide uppercase">Vetting Stage</span>';
                         }
@@ -1622,13 +1605,13 @@ async function executeFinalAdminDelete(jobId) {
                                 <td class="p-3 text-gray-700 text-center text-[11px]">${deadlineFmt}</td>
                                 <td class="p-3 text-center">
                                     <button onclick="openSpecsSheet('${job.id}')" class="text-blue-700 hover:text-blue-900 font-bold text-[11px] underline underline-offset-2 flex items-center justify-center gap-1 mx-auto">
-                                        <i class="fa-solid fa-file-lines text-[10px]"></i> View Sheet
+                                        <i class="fa-solid fa-file-lines text-[10px]"></i> View Job Order
                                     </button>
                                 </td>
                                 <td class="p-3 text-gray-800 font-medium text-center text-[11px]">${sanitize(job.country)}</td>
                                 <td class="p-3 font-bold text-gray-900 text-center">${jobSpecificPitchCount}</td>
                                 <td class="p-3 text-center">${statusBadge}</td>
-                                <td class="p-3 text-center flex justify-center">${(job.status === 'DELETE_REQUESTED' || job.status === 'YES') ? `<button disabled class="bg-gray-100 text-gray-400 border border-gray-200 font-bold px-2 py-1 rounded text-[11px] cursor-not-allowed">Pending Admin Review</button>` : `<button onclick="requestJobDeletion('${job.id}')" class="bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 font-bold px-2 py-1 rounded text-[11px]">Request Delete</button>`}</td>
+                                <td class="p-3 text-center flex justify-center">${(job.status === 'COMPLETED') ? `<button disabled class="bg-gray-100 text-gray-400 border border-gray-200 font-bold px-2 py-1 rounded text-[11px] cursor-not-allowed">Project Completed</button>` : (job.status === 'DELETE_REQUESTED' || job.status === 'YES') ? `<button disabled class="bg-gray-100 text-gray-400 border border-gray-200 font-bold px-2 py-1 rounded text-[11px] cursor-not-allowed">Pending Admin Review</button>` : `<button onclick="requestJobDeletion('${job.id}')" class="bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 font-bold px-2 py-1 rounded text-[11px]">Request Delete</button>`}</td>
                             </tr>
                         `;
                     });
@@ -1658,7 +1641,7 @@ async function executeFinalAdminDelete(jobId) {
 
                 const agentFeed = document.getElementById('agent-marketplace-feed');
                 agentFeed.innerHTML = '';
-                // Keep the job visible if it is APPROVED OR if it has a pending delete request (but not COMPLETED)
+                // Keep the job visible if it is APPROVED OR if it has a pending delete request; exclude COMPLETED
                 const activeJobs = jobs.filter(job => job.status === 'APPROVED' || job.status === 'DELETE_REQUESTED' || job.status === 'YES');
 
                 if (activeJobs.length === 0) {
@@ -1725,7 +1708,10 @@ async function executeFinalAdminDelete(jobId) {
                                         <span class="text-blue-900 font-black text-sm">${totalQty} <span class="text-[10px] font-bold text-gray-400">slots</span></span>
                                     </div>
                                 </div>
-                                <div class="px-4 pb-4">
+                                <div class="px-4 pb-4 space-y-2">
+                                    <button onclick="openSpecsSheet('${job.id}')" class="bg-white border border-blue-200 text-blue-800 hover:bg-blue-50 w-full font-bold py-2 rounded-lg text-xs text-center flex items-center justify-center space-x-1.5 transition shadow-xs">
+                                        <i class="fa-solid fa-file-lines text-[11px]"></i> <span>View Job Order</span>
+                                    </button>
                                     <button onclick="executePitch('${job.id}')" ${disableAttr} class="${buttonStyles}">
                                         ${buttonContent}
                                     </button>
@@ -1740,16 +1726,20 @@ async function executeFinalAdminDelete(jobId) {
                 const adminJobTable = document.getElementById('admin-job-table');
                 adminJobTable.innerHTML = '';
                 if (jobs.length === 0) {
-                    adminJobTable.innerHTML = `<tr><td colspan="11" class="p-3 text-center text-gray-400 italic">No job specifications uploaded.</td></tr>`;
+                    adminJobTable.innerHTML = `<tr><td colspan="10" class="p-3 text-center text-gray-400 italic">No job specifications uploaded.</td></tr>`;
                 } else {
                     jobs.forEach(job => {
                         let badgeColor = "bg-amber-100 text-amber-800 border-amber-200";
                         if (job.status === 'APPROVED') badgeColor = "bg-emerald-100 text-emerald-800 border-emerald-200";
                         if (job.status === 'DELETE_REQUESTED') badgeColor = "bg-rose-100 text-rose-800 border-rose-200 animate-pulse";
-                        if (job.status === 'COMPLETED') badgeColor = "bg-purple-100 text-purple-800 border-purple-200";
+                        if (job.status === 'COMPLETED') badgeColor = "bg-blue-100 text-blue-800 border-blue-200";
 
-                        const toggleLabel = (job.status === 'APPROVED') ? 'Revoke' : (job.status === 'COMPLETED' ? 'Revoke' : 'Approved');
-                        const toggleBtnStyle = (job.status === 'APPROVED') ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' : (job.status === 'COMPLETED' ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100');
+                        const isCompleted = job.status === 'COMPLETED';
+                        const toggleLabel = isCompleted ? 'Reopen' : (job.status === 'APPROVED') ? 'Revoke' : 'Approve';
+                        const toggleBtnStyle = isCompleted ? 'bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100' : (job.status === 'APPROVED') ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100';
+                        const markCompleteBtn = (!isCompleted && job.status === 'APPROVED')
+                            ? `<button onclick="markJobCompleted('${job.id}')" class="bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 font-bold px-2.5 py-1 rounded transition text-[11px] shadow-xs">&#10003; Complete</button>`
+                            : '';
 
                         const postingFmt = job.postingDate
                             ? new Date(job.postingDate).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'})
@@ -1771,19 +1761,14 @@ async function executeFinalAdminDelete(jobId) {
                                 <td class="p-3 text-center font-black text-gray-900">${sanitize(String(totalQtyDisp))}</td>
                                 <td class="p-3 text-center">
                                     <button onclick="openSpecsSheet('${job.id}')" class="text-blue-700 hover:text-blue-900 font-bold text-[11px] underline underline-offset-2 flex items-center justify-center gap-1 mx-auto">
-                                        <i class="fa-solid fa-file-lines text-[10px]"></i> View
+                                        <i class="fa-solid fa-file-lines text-[10px]"></i> View Job Order
                                     </button>
                                 </td>
                                 <td class="p-3"><span class="border px-2 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase ${badgeColor}">${sanitize(job.status)}</span></td>
                                 <td class="p-3 text-center flex justify-center">${(job.status === 'DELETE_REQUESTED' || job.status === 'YES') ? `<button onclick="executeFinalAdminDelete('${job.id}')" class="bg-amber-100 text-amber-700 border border-amber-300 hover:bg-amber-200 font-bold px-2 py-1 rounded text-[11px] animate-pulse tracking-wide shadow-xs cursor-pointer">YES (Click to Approve Delete)</button>` : `<span class="text-xs text-gray-400 font-medium">No Request</span>`}</td>
-                                <td class="p-3 text-center">
-                                    ${job.status === 'COMPLETED'
-                                        ? `<span class="bg-purple-100 text-purple-700 border border-purple-200 font-bold px-2.5 py-1 rounded text-[11px] tracking-wide uppercase">Project Completed</span>`
-                                        : `<button onclick="markJobCompleted('${job.id}')" class="bg-purple-50 text-purple-700 border border-purple-300 hover:bg-purple-100 font-bold px-2.5 py-1 rounded transition text-[11px] shadow-xs tracking-wide"><i class="fa-solid fa-circle-check mr-1"></i>Mark Complete</button>`
-                                    }
-                                </td>
                                 <td class="p-3 text-right space-x-1.5 whitespace-nowrap">
                                     <button onclick="toggleJobApproval('${job.id}')" class="border font-bold px-2.5 py-1 rounded transition text-[11px] shadow-xs ${toggleBtnStyle}">${toggleLabel}</button>
+                                    ${markCompleteBtn}
                                     <button onclick="deleteLineItem('${job.id}', 'wconnect_jobs')" class="bg-rose-600 text-white hover:bg-rose-700 font-bold px-2.5 py-1 rounded transition text-[11px] shadow-xs"><i class="fa-solid fa-trash-can"></i> Delete</button>
                                 </td>
                             </tr>
@@ -1848,8 +1833,8 @@ async function executeFinalAdminDelete(jobId) {
                     const job = jobs.find(j => j.id === p.jobId);
                     // Skip only if the job is completely missing from the database
                     if (!job) return;
-                    // Allow rendering if the job is APPROVED OR if it is currently in a pending delete state
-                    if (job.status !== 'APPROVED' && job.status !== 'DELETE_REQUESTED' && job.status !== 'YES') return;
+                    // Allow rendering if the job is APPROVED, COMPLETED, or in a pending delete state
+                    if (job.status !== 'APPROVED' && job.status !== 'DELETE_REQUESTED' && job.status !== 'YES' && job.status !== 'COMPLETED') return;
                     const agency = agencies.find(a => a.id === p.agencyId);
 
                         const jobRefNo   = job ? sanitize(job.refNo || job.id) : '<span class="text-gray-400 italic">Purged</span>';
@@ -1965,6 +1950,33 @@ async function handlePasswordReset() {
     setInterval(async function() {
         await refreshAll();
     }, 5000);
+
+    // ── Supabase Realtime subscriptions for instant UI updates ────
+    // Subscribe to all four tables so every portal (admin, employer, agency) 
+    // reflects changes immediately without waiting for the next poll cycle.
+    const _realtimeChannel = _supabase
+        .channel('weconnect-realtime-all')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'jobs' }, async () => {
+            await fetchTable('wconnect_jobs');
+            renderAllViews();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'employers' }, async () => {
+            await fetchTable('wconnect_employers');
+            renderAllViews();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'agencies' }, async () => {
+            await fetchTable('wconnect_agencies');
+            renderAllViews();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'pitches' }, async () => {
+            await fetchTable('wconnect_pitches');
+            renderAllViews();
+        })
+        .subscribe((status) => {
+            if (status === 'SUBSCRIBED') {
+                console.log('[weconnect] Realtime channel active — all tables live.');
+            }
+        });
 })();
 
 // Function to open the Job Order Container/Modal
