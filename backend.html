@@ -397,7 +397,7 @@
             <table class="w-full text-left border-collapse whitespace-nowrap min-w-[600px]">
                 <thead>
                     <tr class="bg-gray-50 border-b border-gray-200 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-gray-500">
-                        <th class="p-3 pl-4">Job Reference Number</th>
+                        <th class="p-3 pl-4">Job Order Reference</th>
                         <th class="p-3">Posting Date</th>
                         <th class="p-3 text-center">Total Quantity Needed</th>
                         <th class="p-3">Deadline</th>
@@ -496,7 +496,7 @@
                             <table class="w-full text-left border-collapse text-xs min-w-[600px]">
                                 <thead>
                                     <tr class="bg-gray-50 border-b border-gray-200 text-[10px] font-bold uppercase tracking-wider text-gray-500">
-                                        <th class="p-3">Job Title</th><th class="p-3">Employer Name</th><th class="p-3">Employer Country</th><th class="p-3">Job Status</th><th class="p-3">Delete Request</th><th class="p-3 text-right">Action Controls</th>
+                                        <th class="p-3">Job Order Reference</th><th class="p-3">Posting Date</th><th class="p-3">Deadline</th><th class="p-3">Employer Name</th><th class="p-3">Work Country</th><th class="p-3 text-center">Total Qty Needed</th><th class="p-3 text-center">View Sheet</th><th class="p-3">Job Status</th><th class="p-3">Delete Request</th><th class="p-3 text-right">Action Controls</th>
                                     </tr>
                                 </thead>
                                 <tbody id="admin-job-table" class="divide-y divide-gray-100"></tbody>
@@ -538,10 +538,12 @@
                             <table class="w-full text-left border-collapse text-xs min-w-[850px]">
                                 <thead>
                                     <tr class="bg-gray-50 border-b border-gray-200 text-[10px] font-bold uppercase tracking-wider text-gray-500">
-                                        <th class="p-3">Job Title</th>
-                                        <th class="p-3">Employer Country</th>
-                                        <th class="p-3">Vacancies Required</th>
-                                        <th class="p-3">Monthly Package</th>
+                                        <th class="p-3">Job Order Reference</th>
+                                        <th class="p-3">Posting Date</th>
+                                        <th class="p-3">Deadline</th>
+                                        <th class="p-3">Employer Name</th>
+                                        <th class="p-3">Work Country</th>
+                                        <th class="p-3 text-center">Total Qty Required</th>
                                         <th class="p-3">Agency Name</th>
                                         <th class="p-3">SLBFE License Number</th>
                                         <th class="p-3 text-right">Action Controls</th>
@@ -985,6 +987,7 @@
                 refNo:         row.ref_no        || row.id,
                 postingDate:   row.created_at    || row.posting_date || null,
                 deadline:      row.deadline       || null,
+                totalQty:      row.total_qty      || row.vacancy_count || 0,
                 lineItems:     row.line_items     ? (typeof row.line_items === 'string' ? JSON.parse(row.line_items) : row.line_items) : [],
                 ot:            row.ot,
                 food:          row.food,
@@ -1539,7 +1542,12 @@ async function executeFinalAdminDelete(jobId) {
 
                 const myJobs = jobs.filter(j => j.employerId === sessionUser.id);
                 document.getElementById('client-total-orders').innerText = myJobs.length;
-                document.getElementById('client-active-vacancies').innerText = myJobs.filter(j => j.status === 'APPROVED').reduce((acc, curr) => acc + parseInt(curr.vacancyCount || 0), 0);
+                document.getElementById('client-active-vacancies').innerText = myJobs.filter(j => j.status === 'APPROVED').reduce((acc, curr) => {
+                    const qty = curr.lineItems && curr.lineItems.length > 0
+                        ? curr.lineItems.reduce((s, i) => s + Number(i.quantity || 0), 0)
+                        : parseInt(curr.totalQty || curr.vacancyCount || 0);
+                    return acc + qty;
+                }, 0);
                 
                 const myJobIds = myJobs.map(j => j.id);
                 const relatedPitchesCount = pitches.filter(p => myJobIds.includes(p.jobId)).length;
@@ -1647,26 +1655,53 @@ async function executeFinalAdminDelete(jobId) {
                             buttonContent = '<i class="fa-solid fa-paper-plane"></i> <span>Submit Application</span>';
                         }
 
-                        const displayCurrency = job.currency || 'USD';
-                        const displayAmt = job.salaryAmount || job.salary;
+                        const postingFmt = job.postingDate
+                            ? new Date(job.postingDate).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'})
+                            : '—';
+                        const deadlineFmt = job.deadline
+                            ? new Date(job.deadline).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'})
+                            : '—';
+                        const lineItems = (job.lineItems && job.lineItems.length > 0)
+                            ? job.lineItems
+                            : [{ category: job.title, quantity: job.vacancyCount }];
+                        const totalQty = lineItems.reduce((s, i) => s + Number(i.quantity || 0), 0);
+                        const lineItemsHTML = lineItems.map(li => `
+                            <div class="flex justify-between items-center py-1 border-b border-gray-50 last:border-0">
+                                <span class="text-gray-700 font-medium truncate pr-2">${sanitize(li.category || '—')}</span>
+                                <span class="bg-blue-50 text-blue-800 font-black font-mono px-2 py-0.5 rounded text-[10px] shrink-0">${sanitize(li.quantity)} slots</span>
+                            </div>`).join('');
 
                         agentFeed.innerHTML += `
-                            <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-xs flex flex-col justify-between relative overflow-hidden">
-                                <div>
-                                    <div class="flex justify-between items-start gap-2">
-                                        <h4 class="font-bold text-gray-900 text-sm leading-tight">${sanitize(job.title)}</h4>
-                                        <span class="bg-gray-100 font-mono text-gray-700 px-1.5 py-0.5 rounded text-[10px] whitespace-nowrap shrink-0">${sanitize(job.vacancyCount)} Openings</span>
+                            <div class="bg-white border border-gray-200 rounded-xl shadow-xs flex flex-col justify-between relative overflow-hidden">
+                                <div class="bg-blue-900 px-4 py-2.5 flex justify-between items-center">
+                                    <span class="font-mono font-bold text-white text-xs tracking-wider">${sanitize(job.refNo || job.id)}</span>
+                                    <span class="bg-white/20 text-white text-[10px] font-bold px-2 py-0.5 rounded">${sanitize(job.country)}</span>
+                                </div>
+                                <div class="p-4 flex-1">
+                                    <div class="grid grid-cols-2 gap-2 text-[11px] mb-3">
+                                        <div>
+                                            <span class="text-gray-400 font-bold uppercase text-[9px] block">Posting Date</span>
+                                            <span class="text-gray-800 font-semibold">${postingFmt}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-gray-400 font-bold uppercase text-[9px] block">Deadline</span>
+                                            <span class="text-gray-800 font-semibold">${deadlineFmt}</span>
+                                        </div>
                                     </div>
-                                    <p class="text-[11px] text-blue-900 font-bold mt-1 mb-2 flex items-center"><i class="fa-solid fa-building mr-1.5 text-gray-400"></i>${sanitize(job.employerName)}</p>
-                                    <div class="space-y-1 text-xs border-t border-gray-50 pt-2 font-medium">
-                                        <div class="flex justify-between text-gray-500"><span class="text-[11px]">Employer Country:</span> <span class="text-gray-900 font-semibold">${sanitize(job.country)}</span></div>
-                                        <div class="flex justify-between text-gray-500"><span class="text-[11px]">Gross Monthly Salary:</span> <span class="text-emerald-600 font-bold">${sanitize(displayCurrency)} ${sanitize(displayAmt)}</span></div>
-                                        <div class="flex justify-between text-gray-500"><span class="text-[11px]">Routing Verification:</span> <span class="font-semibold text-gray-800">${job.slbfeRequired ? '<span class="text-blue-600 font-bold">SLBFE Required</span>' : '<span class="text-gray-400">Standard Plan</span>'}</span></div>
+                                    <div class="border border-gray-100 rounded-lg p-2 mb-3 space-y-0.5 text-xs">
+                                        <p class="text-[9px] font-bold uppercase text-gray-400 tracking-wider mb-1.5">Job Categories</p>
+                                        ${lineItemsHTML}
+                                    </div>
+                                    <div class="flex justify-between items-center text-xs border-t border-gray-100 pt-2">
+                                        <span class="text-gray-500 font-bold uppercase text-[9px]">Total Vacancies</span>
+                                        <span class="text-blue-900 font-black text-sm">${totalQty} <span class="text-[10px] font-bold text-gray-400">slots</span></span>
                                     </div>
                                 </div>
-                                <button onclick="executePitch('${job.id}')" ${disableAttr} class="${buttonStyles}">
-                                    ${buttonContent}
-                                </button>
+                                <div class="px-4 pb-4">
+                                    <button onclick="executePitch('${job.id}')" ${disableAttr} class="${buttonStyles}">
+                                        ${buttonContent}
+                                    </button>
+                                </div>
                             </div>
                         `;
                     });
@@ -1677,7 +1712,7 @@ async function executeFinalAdminDelete(jobId) {
                 const adminJobTable = document.getElementById('admin-job-table');
                 adminJobTable.innerHTML = '';
                 if (jobs.length === 0) {
-                    adminJobTable.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-gray-400 italic">No job specifications uploaded.</td></tr>`;
+                    adminJobTable.innerHTML = `<tr><td colspan="10" class="p-3 text-center text-gray-400 italic">No job specifications uploaded.</td></tr>`;
                 } else {
                     jobs.forEach(job => {
                         let badgeColor = "bg-amber-100 text-amber-800 border-amber-200";
@@ -1687,11 +1722,29 @@ async function executeFinalAdminDelete(jobId) {
                         const toggleLabel = (job.status === 'APPROVED') ? 'Revoke' : 'Approved';
                         const toggleBtnStyle = (job.status === 'APPROVED') ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100';
 
+                        const postingFmt = job.postingDate
+                            ? new Date(job.postingDate).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'})
+                            : '—';
+                        const deadlineFmt = job.deadline
+                            ? new Date(job.deadline).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'})
+                            : '—';
+                        const totalQtyDisp = job.lineItems && job.lineItems.length > 0
+                            ? job.lineItems.reduce((s, i) => s + Number(i.quantity || 0), 0)
+                            : (job.totalQty || job.vacancyCount || '—');
+
                         adminJobTable.innerHTML += `
                             <tr class="hover:bg-gray-50/50 border-b border-gray-100">
-                                <td class="p-3 font-bold text-gray-900">${sanitize(job.title)} <span class="block text-[10px] text-gray-400 font-mono font-normal">Slots: ${sanitize(job.vacancyCount)}</span></td>
+                                <td class="p-3 font-mono font-bold text-blue-900 text-[11px]">${sanitize(job.refNo || job.id)}</td>
+                                <td class="p-3 text-gray-600 text-[11px]">${postingFmt}</td>
+                                <td class="p-3 text-gray-600 text-[11px]">${deadlineFmt}</td>
                                 <td class="p-3 text-blue-900 font-semibold">${sanitize(job.employerName)}</td>
                                 <td class="p-3 text-gray-700">${sanitize(job.country)}</td>
+                                <td class="p-3 text-center font-black text-gray-900">${sanitize(String(totalQtyDisp))}</td>
+                                <td class="p-3 text-center">
+                                    <button onclick="openSpecsSheet('${job.id}')" class="text-blue-700 hover:text-blue-900 font-bold text-[11px] underline underline-offset-2 flex items-center justify-center gap-1 mx-auto">
+                                        <i class="fa-solid fa-file-lines text-[10px]"></i> View
+                                    </button>
+                                </td>
                                 <td class="p-3"><span class="border px-2 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase ${badgeColor}">${sanitize(job.status)}</span></td>
                                 <td class="p-3 text-center flex justify-center">${(job.status === 'DELETE_REQUESTED' || job.status === 'YES') ? `<button onclick="executeFinalAdminDelete('${job.id}')" class="bg-amber-100 text-amber-700 border border-amber-300 hover:bg-amber-200 font-bold px-2 py-1 rounded text-[11px] animate-pulse tracking-wide shadow-xs cursor-pointer">YES (Click to Approve Delete)</button>` : `<span class="text-xs text-gray-400 font-medium">No Request</span>`}</td>
                                 <td class="p-3 text-right space-x-1.5 whitespace-nowrap">
@@ -1754,7 +1807,7 @@ async function executeFinalAdminDelete(jobId) {
                 const adminPitchesTable = document.getElementById('admin-pitches-table');
                 adminPitchesTable.innerHTML = '';
                 if (pitches.length === 0) {
-                    adminPitchesTable.innerHTML = `<tr><td colspan="7" class="p-3 text-center text-gray-400 italic">No Expressions of Interest submissions found in database ledger.</td></tr>`;
+                    adminPitchesTable.innerHTML = `<tr><td colspan="9" class="p-3 text-center text-gray-400 italic">No Expressions of Interest submissions found in database ledger.</td></tr>`;
                 } else {
                     pitches.forEach(p => {
                     const job = jobs.find(j => j.id === p.jobId);
@@ -1764,25 +1817,31 @@ async function executeFinalAdminDelete(jobId) {
                     if (job.status !== 'APPROVED' && job.status !== 'DELETE_REQUESTED' && job.status !== 'YES') return;
                     const agency = agencies.find(a => a.id === p.agencyId);
 
-                        const jobTitle = job ? sanitize(job.title) : '<span class="text-gray-400 italic">Purged Row Job Specification</span>';
+                        const jobRefNo   = job ? sanitize(job.refNo || job.id) : '<span class="text-gray-400 italic">Purged</span>';
                         const jobCountry = job ? sanitize(job.country) : 'N/A';
-                        const vacancies = job ? sanitize(job.vacancyCount) : 'N/A';
                         const agencyName = agency ? sanitize(agency.agencyName) : '<span class="text-gray-400 italic">Purged Row Agency Record</span>';
-                        const licenseNo = agency ? sanitize(agency.licenseNumber) : 'N/A';
-
-                        let monthlyPkg = 'N/A';
-                        if (job) {
-                            const currency = job.currency || 'USD';
-                            const amt = job.salaryAmount || job.salary || 'N/A';
-                            monthlyPkg = `${sanitize(currency)} ${sanitize(amt)}`;
-                        }
+                        const licenseNo  = agency ? sanitize(agency.licenseNumber) : 'N/A';
+                        const empName    = job ? sanitize(job.employerName) : 'N/A';
+                        const postingFmt = job && job.postingDate
+                            ? new Date(job.postingDate).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'})
+                            : '—';
+                        const deadlineFmt = job && job.deadline
+                            ? new Date(job.deadline).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'})
+                            : '—';
+                        const totalQtyDisp = job
+                            ? (job.lineItems && job.lineItems.length > 0
+                                ? job.lineItems.reduce((s, i) => s + Number(i.quantity || 0), 0)
+                                : (job.totalQty || job.vacancyCount || '—'))
+                            : 'N/A';
 
                         adminPitchesTable.innerHTML += `
                             <tr class="hover:bg-gray-50/50 border-b border-gray-100">
-                                <td class="p-3 font-bold text-gray-900">${jobTitle}</td>
+                                <td class="p-3 font-mono font-bold text-blue-900 text-[11px]">${jobRefNo}</td>
+                                <td class="p-3 text-gray-600 text-[11px]">${postingFmt}</td>
+                                <td class="p-3 text-gray-600 text-[11px]">${deadlineFmt}</td>
+                                <td class="p-3 font-semibold text-gray-800">${empName}</td>
                                 <td class="p-3 text-gray-700">${jobCountry}</td>
-                                <td class="p-3 font-mono font-bold text-gray-600">${vacancies}</td>
-                                <td class="p-3 text-emerald-600 font-bold">${monthlyPkg}</td>
+                                <td class="p-3 text-center font-black text-gray-900">${sanitize(String(totalQtyDisp))}</td>
                                 <td class="p-3 font-semibold text-blue-900">${agencyName}</td>
                                 <td class="p-3 font-mono font-bold text-purple-700">${licenseNo}</td>
                                 <td class="p-3 text-right">
@@ -2004,7 +2063,29 @@ function removeStagedItem(index) {
     renderStagedLineItems();
 }
 
-// ── Publish all staged items to Supabase ─────────────────────
+// ── Generate next WC-XXXXX reference number ───────────────────
+async function generateWCRefNo() {
+    const { data, error } = await _supabase
+        .from('jobs')
+        .select('ref_no')
+        .like('ref_no', 'WC-%')
+        .order('created_at', { ascending: false });
+
+    if (error || !data || data.length === 0) return 'WC-00001';
+
+    // Extract numeric parts, find the max
+    let max = 0;
+    data.forEach(row => {
+        const match = (row.ref_no || '').match(/^WC-(\d+)$/);
+        if (match) {
+            const num = parseInt(match[1], 10);
+            if (num > max) max = num;
+        }
+    });
+    return 'WC-' + String(max + 1).padStart(5, '0');
+}
+
+// ── Publish ONE row per job order to Supabase ─────────────────
 async function commitPublishJobOrderRequest() {
     const countryEl  = document.getElementById('commonWorkCountry');
     const deadlineEl = document.getElementById('commonProjectDeadline');
@@ -2019,51 +2100,53 @@ async function commitPublishJobOrderRequest() {
     btn.disabled = true;
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i>Publishing...';
 
-    // Generate one reference number for the whole order
-    const refNo = 'CONN-' + Date.now().toString(36).toUpperCase();
-    const postingDate = new Date().toISOString();
-    const totalQty = stagedLineItems.reduce((s, i) => s + Number(i.quantity), 0);
-
     try {
-        for (const item of stagedLineItems) {
-            const payload = {
-                employer_id:   sessionUser.id,
-                employer_name: sessionUser.companyName,
-                title:         item.category,
-                country:       workCountry,
-                vacancy_count: item.quantity,
-                salary_amount: item.salary,
-                currency:      item.currency,
-                slbfe_required: false,
-                status:        'PENDING',
-                ref_no:        refNo,
-                posting_date:  postingDate,
-                deadline:      deadline,
-                total_qty:     totalQty,
-                working_hours: item.hours,
-                working_days:  item.days,
-                ot:            item.ot,
-                food:          item.food,
-                accommodation: item.accommodation,
-                medical:       item.medical,
-                visa:          item.visa,
-                ticket:        item.ticket,
-                line_items:    JSON.stringify(stagedLineItems)
-            };
-            const { error } = await _supabase.from('jobs').insert([payload]);
-            if (error) {
-                alert('Publish failed: ' + error.message);
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up mr-1.5"></i>Publish Job Order';
-                return;
-            }
+        // Generate one unique WC-XXXXX reference for the whole order
+        const refNo       = await generateWCRefNo();
+        const postingDate = new Date().toISOString();
+        const totalQty    = stagedLineItems.reduce((s, i) => s + Number(i.quantity), 0);
+        // Use first line item's category as the representative title
+        const firstTitle  = stagedLineItems[0].category;
+
+        const payload = {
+            employer_id:    sessionUser.id,
+            employer_name:  sessionUser.companyName,
+            title:          firstTitle,
+            country:        workCountry,
+            vacancy_count:  totalQty,
+            salary_amount:  stagedLineItems[0].salary,
+            currency:       stagedLineItems[0].currency,
+            slbfe_required: false,
+            status:         'PENDING',
+            ref_no:         refNo,
+            posting_date:   postingDate,
+            deadline:       deadline,
+            total_qty:      totalQty,
+            working_hours:  stagedLineItems[0].hours,
+            working_days:   stagedLineItems[0].days,
+            ot:             stagedLineItems[0].ot,
+            food:           stagedLineItems[0].food,
+            accommodation:  stagedLineItems[0].accommodation,
+            medical:        stagedLineItems[0].medical,
+            visa:           stagedLineItems[0].visa,
+            ticket:         stagedLineItems[0].ticket,
+            line_items:     JSON.stringify(stagedLineItems)
+        };
+
+        const { error } = await _supabase.from('jobs').insert([payload]);
+        if (error) {
+            alert('Publish failed: ' + error.message);
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up mr-1.5"></i>Publish Job Order';
+            return;
         }
+
         await fetchTable('wconnect_jobs');
         stagedLineItems = [];
         renderStagedLineItems();
         closeModal('jobModal');
         renderAllViews();
-        alert('Job Order published successfully!');
+        alert('Job Order ' + refNo + ' published successfully!');
     } catch(err) {
         alert('Unexpected error: ' + err.message);
     } finally {
