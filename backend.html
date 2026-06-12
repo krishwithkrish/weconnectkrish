@@ -183,17 +183,17 @@
         <div class="hidden" id="client-pitches-count"></div>
     </div>
 
-    <div id="jobModal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-white rounded-xl shadow-xl border border-gray-200 w-full max-w-4xl max-h-[90vh] flex flex-col animate-in fade-in zoom-in-95 duration-200">
-            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-xl">
+    <div id="jobModal" class="hidden fixed inset-0 z-50 bg-white flex flex-col overflow-y-auto">
+        <div class="bg-white w-full flex-1 flex flex-col">
+            <div class="px-8 py-5 border-b border-gray-200 flex justify-between items-center bg-gray-900 text-white">
                 <div>
-                    <h3 class="text-lg font-bold text-gray-900">Create Bulk Job Order Request</h3>
-                    <p class="text-xs text-gray-500 mt-0.5">Define your target hiring location, global execution timeline, and specify multi-line item jobs.</p>
+                    <h3 class="text-lg font-bold text-white">Create Bulk Job Order Request</h3>
+                    <p class="text-xs text-gray-300 mt-0.5">Define your target hiring location, global execution timeline, and specify multi-line item jobs.</p>
                 </div>
-                <button onclick="closeModal('jobModal')" class="text-gray-400 hover:text-gray-600 text-lg p-1"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="closeModal('jobModal')" class="text-gray-400 hover:text-white text-xl p-1"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <div class="p-6 overflow-y-auto flex-1 space-y-6">
+            <div class="px-8 py-6 overflow-y-auto flex-1 space-y-6 max-w-6xl mx-auto w-full">
                 <div class="bg-blue-50/50 border border-blue-100 rounded-xl p-4">
                     <h4 class="text-xs font-bold uppercase text-blue-900 tracking-wider mb-3"><i class="fa-solid fa-earth-americas mr-1.5"></i>Global Project Configuration Parameters</h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -244,18 +244,18 @@
                         <button type="button" onclick="hideLineItemForm()" class="text-xs text-gray-400 hover:text-red-600"><i class="fa-solid fa-trash-can mr-1"></i>Discard Form</button>
                     </div>
                     
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 text-xs">
                         <div>
                             <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">3. Job Category</label>
-                            <input type="text" id="jobFieldCategory" placeholder="e.g. Structural Welder" class="w-full border border-gray-300 p-2 rounded bg-white">
+                            <input type="text" id="jobFieldCategory" placeholder="e.g. Structural Welder" required class="w-full border border-gray-300 p-2 rounded bg-white">
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">4. Quantity</label>
-                            <input type="number" id="jobFieldQuantity" min="1" placeholder="e.g. 25" class="w-full border border-gray-300 p-2 rounded bg-white">
+                            <input type="number" id="jobFieldQuantity" min="1" placeholder="e.g. 25" required class="w-full border border-gray-300 p-2 rounded bg-white">
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">5. Base Salary</label>
-                            <input type="number" id="jobFieldSalary" min="0" placeholder="e.g. 4500" class="w-full border border-gray-300 p-2 rounded bg-white">
+                            <input type="number" id="jobFieldSalary" min="0" placeholder="e.g. 4500" required class="w-full border border-gray-300 p-2 rounded bg-white">
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">6. Currency</label>
@@ -283,11 +283,11 @@
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">7. Working Hours / Day</label>
-                            <input type="number" id="jobFieldHours" min="1" max="24" placeholder="e.g. 8" class="w-full border border-gray-300 p-2 rounded bg-white">
+                            <input type="number" id="jobFieldHours" min="1" max="24" placeholder="e.g. 8" required class="w-full border border-gray-300 p-2 rounded bg-white">
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">8. Working Days / Week</label>
-                            <input type="number" id="jobFieldDays" min="1" max="7" placeholder="e.g. 6" class="w-full border border-gray-300 p-2 rounded bg-white">
+                            <input type="number" id="jobFieldDays" min="1" max="7" placeholder="e.g. 6" required class="w-full border border-gray-300 p-2 rounded bg-white">
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">9. Overtime (OT)</label>
@@ -340,35 +340,10 @@
                     </div>
                 </div>
 
-                <div class="border border-gray-200 rounded-xl overflow-hidden bg-gray-50/50">
-                    <div class="p-3 bg-gray-100 border-b border-gray-200 text-xs font-bold text-gray-700 flex justify-between items-center">
-                        <span>STAGED REQUIREMENTS REGISTRATION LINE ITEMS</span>
-                        <span id="staged-count-badge" class="bg-blue-900 text-white text-[10px] px-2 py-0.5 rounded-full font-mono">0 Items Loaded</span>
-                    </div>
-                    <div class="overflow-x-auto w-full">
-                        <table class="w-full text-left border-collapse whitespace-nowrap text-xs">
-                            <thead>
-                                <tr class="bg-white border-b border-gray-200 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
-                                    <th class="p-2.5 pl-4">Item #</th>
-                                    <th class="p-2.5">Category</th>
-                                    <th class="p-2.5 text-center">Qty</th>
-                                    <th class="p-2.5">Remuneration Package</th>
-                                    <th class="p-2.5 text-center">Hours / Days</th>
-                                    <th class="p-2.5 text-center">Perks Matrix (9-14)</th>
-                                    <th class="p-2.5 text-center pr-4">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="staged-line-items-tbody" class="divide-y divide-gray-100 bg-white text-[11px]">
-                                <tr id="empty-stage-row">
-                                    <td colspan="7" class="p-8 text-center text-gray-400 italic font-medium">No requirements added to line items list yet. Fill fields configuration above and select 'Add To List'.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                
             </div>
 
-            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end items-center space-x-2 rounded-b-xl">
+            <div class="px-8 py-4 border-t border-gray-200 bg-gray-50 flex justify-end items-center space-x-2">
                 <button type="button" onclick="closeModal('jobModal')" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-lg text-xs transition-colors">Cancel</button>
                 <button type="button" id="btnPublishJobOrder" onclick="commitPublishJobOrderRequest()" class="hidden px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs shadow tracking-wide transition-colors">
                     <i class="fa-solid fa-cloud-arrow-up mr-1.5"></i>Publish Job Order
@@ -388,6 +363,7 @@
                         <th class="p-3 text-center">Total Quantity Needed</th>
                         <th class="p-3">Deadline</th>
                         <th class="p-3 text-center">Specifications Sheet</th>
+                        <th class="p-3">Work Country</th>
                         <th class="p-3">Interested Agencies</th>
                         <th class="p-3">Workflow Status</th>
                         <th class="p-3 pr-4 text-center">Actions</th>
@@ -966,7 +942,19 @@
                 salaryAmount:  row.salary_amount,
                 currency:      row.currency,
                 slbfeRequired: row.slbfe_required,
-                status:        row.status
+                status:        row.status,
+                refNo:         row.ref_no        || row.id,
+                postingDate:   row.created_at    || row.posting_date || null,
+                deadline:      row.deadline       || null,
+                lineItems:     row.line_items     ? (typeof row.line_items === 'string' ? JSON.parse(row.line_items) : row.line_items) : [],
+                ot:            row.ot,
+                food:          row.food,
+                accommodation: row.accommodation,
+                medical:       row.medical,
+                visa:          row.visa,
+                ticket:        row.ticket,
+                hours:         row.working_hours,
+                days:          row.working_days
             };
         }
         function normalisePitch(row) {
@@ -1521,7 +1509,7 @@ async function executeFinalAdminDelete(jobId) {
                 const clientJobTable = document.getElementById('client-job-table');
                 clientJobTable.innerHTML = '';
                 if (myJobs.length === 0) {
-                    clientJobTable.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400 italic font-medium bg-gray-50/50">You have not published any job specification quotas yet.</td></tr>`;
+                    clientJobTable.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-gray-400 italic font-medium bg-gray-50/50">You have not published any job specification quotas yet.</td></tr>`;
                 } else {
 
                         myJobs.forEach(job => {
@@ -1540,17 +1528,32 @@ async function executeFinalAdminDelete(jobId) {
                         const displayCurrency = job.currency || 'USD';
                         const displayAmt = job.salaryAmount || job.salary || 'N/A';
 
+                        const jobRefNo     = sanitize(job.refNo || job.id);
+                        const postingDateFmt = job.postingDate
+                            ? new Date(job.postingDate).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'})
+                            : '—';
+                        const deadlineFmt  = job.deadline
+                            ? new Date(job.deadline).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'})
+                            : '—';
+                        const totalQtyDisp = job.lineItems && job.lineItems.length > 0
+                            ? job.lineItems.reduce((s, i) => s + Number(i.quantity || 0), 0)
+                            : (job.vacancyCount || '—');
+
                         clientJobTable.innerHTML += `
                             <tr class="hover:bg-gray-50/40 transition">
-                                <td class="p-3 font-bold text-gray-900 text-center">${sanitize(job.title)}</td>
-                                <td class="p-3 text-gray-700 font-medium text-center">${sanitize(job.country)}</td>
-                                <td class="p-3 font-mono font-bold text-gray-900 text-center">${sanitize(job.vacancyCount)} Slots</td>
-                                <td class="p-3 text-emerald-600 font-bold text-center">${sanitize(displayCurrency)} ${sanitize(displayAmt)}</td>
-                                <td class="p-3 text-center">${job.slbfeRequired ? '<span class="text-[10px] text-blue-700 bg-blue-50 border border-blue-100 font-bold px-1.5 py-0.5 rounded">Mandatory SLBFE</span>' : '<span class="text-xs text-gray-400">Exempt Plan</span>'}</td>
+                                <td class="p-3 font-mono font-bold text-blue-900 text-center text-[11px]">${jobRefNo}</td>
+                                <td class="p-3 text-gray-700 text-center text-[11px]">${postingDateFmt}</td>
+                                <td class="p-3 font-mono font-bold text-gray-900 text-center">${totalQtyDisp}</td>
+                                <td class="p-3 text-gray-700 text-center text-[11px]">${deadlineFmt}</td>
+                                <td class="p-3 text-center">
+                                    <button onclick="openSpecsSheet('${job.id}')" class="text-blue-700 hover:text-blue-900 font-bold text-[11px] underline underline-offset-2 flex items-center justify-center gap-1 mx-auto">
+                                        <i class="fa-solid fa-file-lines text-[10px]"></i> View Sheet
+                                    </button>
+                                </td>
+                                <td class="p-3 text-gray-800 font-medium text-center text-[11px]">${sanitize(job.country)}</td>
                                 <td class="p-3 font-bold text-gray-900 text-center">${jobSpecificPitchCount}</td>
                                 <td class="p-3 text-center">${statusBadge}</td>
                                 <td class="p-3 text-center flex justify-center">${(job.status === 'DELETE_REQUESTED' || job.status === 'YES') ? `<button disabled class="bg-gray-100 text-gray-400 border border-gray-200 font-bold px-2 py-1 rounded text-[11px] cursor-not-allowed">Pending Admin Review</button>` : `<button onclick="requestJobDeletion('${job.id}')" class="bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 font-bold px-2 py-1 rounded text-[11px]">Request Delete</button>`}</td>
-                            </tr>
                             </tr>
                         `;
                     });
@@ -1844,19 +1847,17 @@ function openJobModal() {
 }
 
 // Function to close the Job Order Container/Modal
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-    }
-}
-
 // Logic helper to manage form visual state inside the modal
 function resetJobOrderFormState() {
     // Reset staged items list
     stagedLineItems = [];
     renderStagedLineItems();
+
+    // Unfreeze #1 and #2 for fresh session
+    const country = document.getElementById('commonWorkCountry');
+    const deadline = document.getElementById('commonProjectDeadline');
+    if (country)  { country.disabled = false;  country.value = '';  country.classList.remove('bg-gray-100','cursor-not-allowed','opacity-75'); }
+    if (deadline) { deadline.disabled = false; deadline.value = ''; deadline.classList.remove('bg-gray-100','cursor-not-allowed','opacity-75'); }
 
     // Hide the 14-field spec form until they click "Add New Job"
     const lineItemForm = document.getElementById('dynamicLineItemForm');
@@ -1886,10 +1887,12 @@ function addCurrentJobToList() {
     const visa         = document.getElementById('jobFieldVisa').value;
     const ticket       = document.getElementById('jobFieldTicket').value;
 
-    if (!category)          { alert('Please enter a Job Category.');   return; }
-    if (!quantity || quantity < 1) { alert('Please enter a valid Quantity.'); return; }
-    if (!salary)            { alert('Please enter a Base Salary.');     return; }
-    if (!currency)          { alert('Please select a Currency.');       return; }
+    if (!category)          { alert('Please enter a Job Category (#3).');       return; }
+    if (!quantity || quantity < 1) { alert('Please enter a valid Quantity (#4).'); return; }
+    if (!salary)            { alert('Please enter a Base Salary (#5).');           return; }
+    if (!currency)          { alert('Please select a Currency (#6).');             return; }
+    if (!hours)             { alert('Please enter Working Hours / Day (#7).');     return; }
+    if (!days)              { alert('Please enter Working Days / Week (#8).');     return; }
 
     stagedLineItems.push({ category, quantity, salary, currency, hours, days, ot, food, accommodation, medical, visa, ticket });
 
@@ -1899,39 +1902,17 @@ function addCurrentJobToList() {
     document.getElementById('btnPublishJobOrder').classList.remove('hidden');
 }
 
-// ── Re-render the staged items table ────────────────────────
+// ── Staged list state tracker (staged box removed from UI) ──
 function renderStagedLineItems() {
-    const tbody = document.getElementById('staged-line-items-tbody');
-    const badge = document.getElementById('staged-count-badge');
-
-    badge.textContent = stagedLineItems.length + ' Item' + (stagedLineItems.length !== 1 ? 's' : '') + ' Loaded';
-
-    if (stagedLineItems.length === 0) {
-        tbody.innerHTML = '<tr id="empty-stage-row"><td colspan="7" class="p-8 text-center text-gray-400 italic font-medium">No requirements added to line items list yet. Fill fields configuration above and select \'Add To List\'.</td></tr>';
-        document.getElementById('btnPublishJobOrder').classList.add('hidden');
-        return;
+    // Staged box removed from UI — just toggle the Publish button visibility
+    const btn = document.getElementById('btnPublishJobOrder');
+    if (btn) {
+        if (stagedLineItems.length > 0) {
+            btn.classList.remove('hidden');
+        } else {
+            btn.classList.add('hidden');
+        }
     }
-
-    tbody.innerHTML = '';
-    stagedLineItems.forEach(function(item, i) {
-        const perkLabels = ['OT', 'Food', 'Accom', 'Medical', 'Visa', 'Ticket'];
-        const perkValues = [item.ot, item.food, item.accommodation, item.medical, item.visa, item.ticket];
-        const perks = perkLabels.map(function(label, idx) {
-            const isYes = perkValues[idx] === 'Yes' || perkValues[idx] === '1 Way Only';
-            const style = isYes ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-400';
-            return '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold ' + style + '">' + label + ': ' + perkValues[idx] + '</span>';
-        }).join(' ');
-
-        tbody.innerHTML += '<tr class="hover:bg-gray-50/40 transition">' +
-            '<td class="p-2.5 pl-4 font-mono text-gray-500">#' + (i + 1) + '</td>' +
-            '<td class="p-2.5 font-bold text-gray-900">' + item.category + '</td>' +
-            '<td class="p-2.5 text-center font-mono font-bold text-blue-900">' + item.quantity + '</td>' +
-            '<td class="p-2.5 font-bold text-emerald-600">' + item.currency + ' ' + item.salary + '</td>' +
-            '<td class="p-2.5 text-center text-gray-600">' + item.hours + 'h / ' + item.days + 'd</td>' +
-            '<td class="p-2.5"><div class="flex flex-wrap gap-1">' + perks + '</div></td>' +
-            '<td class="p-2.5 text-center pr-4"><button onclick="removeStagedItem(' + i + ')" class="text-rose-500 hover:text-rose-700 font-bold text-[11px]"><i class="fa-solid fa-trash-can"></i></button></td>' +
-            '</tr>';
-    });
 }
 
 // ── Remove one staged item by index ─────────────────────────
@@ -1942,16 +1923,23 @@ function removeStagedItem(index) {
 
 // ── Publish all staged items to Supabase ─────────────────────
 async function commitPublishJobOrderRequest() {
-    const workCountry = document.getElementById('commonWorkCountry').value;
-    const deadline    = document.getElementById('commonProjectDeadline').value;
+    const countryEl  = document.getElementById('commonWorkCountry');
+    const deadlineEl = document.getElementById('commonProjectDeadline');
+    const workCountry = countryEl.value;
+    const deadline    = deadlineEl.value;
 
-    if (!workCountry)               { alert('Please select a Work Country.'); return; }
-    if (!deadline)                  { alert('Please select a Project Deadline.'); return; }
+    if (!workCountry)                 { alert('Please select a Work Country (#1).'); return; }
+    if (!deadline)                    { alert('Please select a Project Deadline (#2).'); return; }
     if (stagedLineItems.length === 0) { alert('Please add at least one line item before publishing.'); return; }
 
     const btn = document.getElementById('btnPublishJobOrder');
     btn.disabled = true;
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i>Publishing...';
+
+    // Generate one reference number for the whole order
+    const refNo = 'CONN-' + Date.now().toString(36).toUpperCase();
+    const postingDate = new Date().toISOString();
+    const totalQty = stagedLineItems.reduce((s, i) => s + Number(i.quantity), 0);
 
     try {
         for (const item of stagedLineItems) {
@@ -1964,7 +1952,20 @@ async function commitPublishJobOrderRequest() {
                 salary_amount: item.salary,
                 currency:      item.currency,
                 slbfe_required: false,
-                status:        'PENDING'
+                status:        'PENDING',
+                ref_no:        refNo,
+                posting_date:  postingDate,
+                deadline:      deadline,
+                total_qty:     totalQty,
+                working_hours: item.hours,
+                working_days:  item.days,
+                ot:            item.ot,
+                food:          item.food,
+                accommodation: item.accommodation,
+                medical:       item.medical,
+                visa:          item.visa,
+                ticket:        item.ticket,
+                line_items:    JSON.stringify(stagedLineItems)
             };
             const { error } = await _supabase.from('jobs').insert([payload]);
             if (error) {
@@ -1989,11 +1990,92 @@ async function commitPublishJobOrderRequest() {
 }
 
 
+// ── Specs Sheet viewer ───────────────────────────────────────
+function openSpecsSheet(jobId) {
+    const jobs = getStorage('wconnect_jobs');
+    const job  = jobs.find(j => j.id == jobId);
+    if (!job) { alert('Job record not found.'); return; }
+
+    document.getElementById('lblSheetRefNo').textContent = job.refNo || job.id;
+
+    const container = document.getElementById('specsSheetRenderContainer');
+    const postingDateFmt = job.postingDate
+        ? new Date(job.postingDate).toLocaleDateString('en-GB', {day:'2-digit', month:'long', year:'numeric'})
+        : 'N/A';
+    const deadlineFmt = job.deadline
+        ? new Date(job.deadline).toLocaleDateString('en-GB', {day:'2-digit', month:'long', year:'numeric'})
+        : 'N/A';
+
+    const lineItems = (job.lineItems && job.lineItems.length > 0) ? job.lineItems : [{
+        category: job.title, quantity: job.vacancyCount, salary: job.salaryAmount,
+        currency: job.currency, hours: job.hours || '—', days: job.days || '—',
+        ot: job.ot || '—', food: job.food || '—', accommodation: job.accommodation || '—',
+        medical: job.medical || '—', visa: job.visa || '—', ticket: job.ticket || '—'
+    }];
+
+    const totalQty = lineItems.reduce((s, i) => s + Number(i.quantity || 0), 0);
+
+    const perkBadge = (label, val) => {
+        const yes = val === 'Yes' || val === '1 Way Only';
+        return `<span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold ${yes ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-gray-100 text-gray-400 border border-gray-200'}">${label}: ${val || '—'}</span>`;
+    };
+
+    let lineItemsHTML = lineItems.map((item, idx) => `
+        <div class="border border-gray-200 rounded-lg overflow-hidden">
+            <div class="bg-gray-800 text-white px-4 py-2 text-[11px] font-bold uppercase tracking-wider flex justify-between">
+                <span>Job Line Item #${idx + 1} — ${item.category || '—'}</span>
+                <span class="font-mono text-gray-300">${item.currency || ''} ${item.salary || '—'} / month</span>
+            </div>
+            <div class="p-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                <div><span class="text-[10px] text-gray-500 font-bold uppercase block mb-0.5">#3 Job Category</span><span class="font-bold text-gray-900">${item.category || '—'}</span></div>
+                <div><span class="text-[10px] text-gray-500 font-bold uppercase block mb-0.5">#4 Quantity</span><span class="font-bold text-gray-900">${item.quantity || '—'} Slots</span></div>
+                <div><span class="text-[10px] text-gray-500 font-bold uppercase block mb-0.5">#5 Base Salary</span><span class="font-bold text-emerald-600">${item.currency || ''} ${item.salary || '—'}</span></div>
+                <div><span class="text-[10px] text-gray-500 font-bold uppercase block mb-0.5">#6 Currency</span><span class="font-bold text-gray-900">${item.currency || '—'}</span></div>
+                <div><span class="text-[10px] text-gray-500 font-bold uppercase block mb-0.5">#7 Hours / Day</span><span class="font-bold text-gray-900">${item.hours || '—'} hrs</span></div>
+                <div><span class="text-[10px] text-gray-500 font-bold uppercase block mb-0.5">#8 Days / Week</span><span class="font-bold text-gray-900">${item.days || '—'} days</span></div>
+            </div>
+            <div class="px-4 pb-4 flex flex-wrap gap-1.5">
+                ${perkBadge('#9 OT', item.ot)}
+                ${perkBadge('#10 Food', item.food)}
+                ${perkBadge('#11 Accommodation', item.accommodation)}
+                ${perkBadge('#12 Medical', item.medical)}
+                ${perkBadge('#13 Visa', item.visa)}
+                ${perkBadge('#14 Air Ticket', item.ticket)}
+            </div>
+        </div>
+    `).join('');
+
+    container.innerHTML = `
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-blue-950 text-white rounded-lg text-xs">
+            <div><span class="text-[10px] text-blue-300 font-bold uppercase block mb-0.5">#1 Work Country</span><span class="font-bold text-white">${job.country || '—'}</span></div>
+            <div><span class="text-[10px] text-blue-300 font-bold uppercase block mb-0.5">#2 Project Deadline</span><span class="font-bold text-white">${deadlineFmt}</span></div>
+            <div><span class="text-[10px] text-blue-300 font-bold uppercase block mb-0.5">Posting Date</span><span class="font-bold text-white">${postingDateFmt}</span></div>
+            <div><span class="text-[10px] text-blue-300 font-bold uppercase block mb-0.5">Total Vacancies</span><span class="font-bold text-white">${totalQty} Slots across ${lineItems.length} role(s)</span></div>
+        </div>
+        <div class="space-y-3 mt-2">${lineItemsHTML}</div>
+    `;
+
+    openModal('viewSpecsSheetModal');
+}
+
+
 function showLineItemForm() {
     const lineItemForm = document.getElementById('dynamicLineItemForm');
     if (lineItemForm) {
         lineItemForm.classList.remove('hidden');
     }
+    // Freeze #1 Work Country and #2 Project Deadline after first job is added
+    const country = document.getElementById('commonWorkCountry');
+    const deadline = document.getElementById('commonProjectDeadline');
+    if (!country.value || !deadline.value) {
+        alert('Please fill in Work Country (#1) and Project Deadline (#2) before adding a job.');
+        lineItemForm.classList.add('hidden');
+        return;
+    }
+    country.disabled = true;
+    deadline.disabled = true;
+    country.classList.add('bg-gray-100', 'cursor-not-allowed', 'opacity-75');
+    deadline.classList.add('bg-gray-100', 'cursor-not-allowed', 'opacity-75');
 }
 
 function hideLineItemForm() {
