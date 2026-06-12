@@ -340,7 +340,46 @@
                     </div>
                 </div>
 
-                
+                <!-- ── Staged Line Items Table ─────────────────────────── -->
+                <div id="stagedLineItemsContainer" class="hidden">
+                    <div class="flex items-center justify-between mb-2">
+                        <h5 class="text-xs font-bold uppercase tracking-wider text-gray-700 flex items-center space-x-1.5">
+                            <i class="fa-solid fa-table-list text-blue-900"></i>
+                            <span>Staged Job Line Items</span>
+                            <span id="stagedItemCount" class="bg-blue-900 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">0</span>
+                        </h5>
+                    </div>
+                    <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-xs">
+                        <table class="w-full text-left border-collapse text-[11px] min-w-[860px]">
+                            <thead>
+                                <tr class="bg-gray-900 text-white text-[10px] font-bold uppercase tracking-wider">
+                                    <th class="px-3 py-2.5">#</th>
+                                    <th class="px-3 py-2.5">Job Category</th>
+                                    <th class="px-3 py-2.5 text-center">Qty</th>
+                                    <th class="px-3 py-2.5 text-right">Salary / Mo</th>
+                                    <th class="px-3 py-2.5 text-center">Hrs/Day</th>
+                                    <th class="px-3 py-2.5 text-center">Days/Wk</th>
+                                    <th class="px-3 py-2.5 text-center">OT</th>
+                                    <th class="px-3 py-2.5 text-center">Food</th>
+                                    <th class="px-3 py-2.5 text-center">Accom.</th>
+                                    <th class="px-3 py-2.5 text-center">Medical</th>
+                                    <th class="px-3 py-2.5 text-center">Visa</th>
+                                    <th class="px-3 py-2.5 text-center">Ticket</th>
+                                    <th class="px-3 py-2.5 text-center">Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stagedLineItemsTbody" class="divide-y divide-gray-100 bg-white"></tbody>
+                            <tfoot>
+                                <tr class="bg-gray-50 border-t-2 border-gray-200 font-bold text-xs">
+                                    <td class="px-3 py-2 text-gray-500 uppercase tracking-wider" colspan="2">Total</td>
+                                    <td class="px-3 py-2 text-center text-blue-900 font-black" id="stagedTotalQty">0</td>
+                                    <td colspan="10"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
             </div>
 
             <div class="px-8 py-4 border-t border-gray-200 bg-gray-50 flex justify-end items-center space-x-2">
@@ -1902,17 +1941,61 @@ function addCurrentJobToList() {
     document.getElementById('btnPublishJobOrder').classList.remove('hidden');
 }
 
-// ── Staged list state tracker (staged box removed from UI) ──
+// ── Staged list renderer — builds a full summary table ───────
 function renderStagedLineItems() {
-    // Staged box removed from UI — just toggle the Publish button visibility
-    const btn = document.getElementById('btnPublishJobOrder');
-    if (btn) {
-        if (stagedLineItems.length > 0) {
-            btn.classList.remove('hidden');
-        } else {
-            btn.classList.add('hidden');
-        }
+    const btn       = document.getElementById('btnPublishJobOrder');
+    const container = document.getElementById('stagedLineItemsContainer');
+    const tbody     = document.getElementById('stagedLineItemsTbody');
+    const countBadge = document.getElementById('stagedItemCount');
+    const totalQtyEl = document.getElementById('stagedTotalQty');
+
+    if (stagedLineItems.length === 0) {
+        if (btn)       btn.classList.add('hidden');
+        if (container) container.classList.add('hidden');
+        if (tbody)     tbody.innerHTML = '';
+        return;
     }
+
+    // Show table + publish button
+    if (btn)       btn.classList.remove('hidden');
+    if (container) container.classList.remove('hidden');
+    if (countBadge) countBadge.textContent = stagedLineItems.length;
+
+    // Badge helper: green for Yes / 1 Way Only, grey for No
+    const badge = (val) => {
+        const pos = val === 'Yes' || val === '1 Way Only';
+        const colour = pos
+            ? 'bg-emerald-100 text-emerald-700 border border-emerald-200'
+            : 'bg-gray-100 text-gray-400 border border-gray-200';
+        return `<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold ${colour}">${val || '—'}</span>`;
+    };
+
+    let totalQty = 0;
+    tbody.innerHTML = stagedLineItems.map((item, idx) => {
+        totalQty += Number(item.quantity || 0);
+        return `
+            <tr class="hover:bg-blue-50/30 transition-colors">
+                <td class="px-3 py-2 font-mono text-gray-400 text-[10px]">${idx + 1}</td>
+                <td class="px-3 py-2 font-bold text-gray-900">${item.category || '—'}</td>
+                <td class="px-3 py-2 text-center font-black text-blue-900">${item.quantity || '—'}</td>
+                <td class="px-3 py-2 text-right font-bold text-emerald-700">${item.currency || ''} ${item.salary || '—'}</td>
+                <td class="px-3 py-2 text-center text-gray-700">${item.hours || '—'}</td>
+                <td class="px-3 py-2 text-center text-gray-700">${item.days || '—'}</td>
+                <td class="px-3 py-2 text-center">${badge(item.ot)}</td>
+                <td class="px-3 py-2 text-center">${badge(item.food)}</td>
+                <td class="px-3 py-2 text-center">${badge(item.accommodation)}</td>
+                <td class="px-3 py-2 text-center">${badge(item.medical)}</td>
+                <td class="px-3 py-2 text-center">${badge(item.visa)}</td>
+                <td class="px-3 py-2 text-center">${badge(item.ticket)}</td>
+                <td class="px-3 py-2 text-center">
+                    <button onclick="removeStagedItem(${idx})" class="text-rose-500 hover:text-rose-700 hover:bg-rose-50 p-1 rounded transition-colors" title="Remove row">
+                        <i class="fa-solid fa-trash-can text-[11px]"></i>
+                    </button>
+                </td>
+            </tr>`;
+    }).join('');
+
+    if (totalQtyEl) totalQtyEl.textContent = totalQty;
 }
 
 // ── Remove one staged item by index ─────────────────────────
