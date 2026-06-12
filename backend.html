@@ -171,7 +171,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
         <div class="bg-white p-4 rounded-xl shadow-xs border border-gray-200 flex flex-col justify-center">
             <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Your Total Job Orders</p>
             <p class="text-xl sm:text-2xl font-bold text-gray-900 mt-0.5" id="client-total-orders">0</p>
@@ -179,6 +179,14 @@
         <div class="bg-white p-4 rounded-xl shadow-xs border border-gray-200 flex flex-col justify-center">
             <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Total Active Vacancies</p>
             <p class="text-xl sm:text-2xl font-bold text-emerald-600 mt-0.5" id="client-active-vacancies">0</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow-xs border border-gray-200 flex flex-col justify-center">
+            <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Your Active Job Orders</p>
+            <p class="text-xl sm:text-2xl font-bold text-emerald-600 mt-0.5" id="client-active-orders">0</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow-xs border border-gray-200 flex flex-col justify-center">
+            <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Your Completed Job Orders</p>
+            <p class="text-xl sm:text-2xl font-bold text-blue-700 mt-0.5" id="client-completed-orders">0</p>
         </div>
         <div class="hidden" id="client-pitches-count"></div>
     </div>
@@ -1561,6 +1569,8 @@ async function executeFinalAdminDelete(jobId) {
                 const myJobIds = myJobs.map(j => j.id);
                 const relatedPitchesCount = pitches.filter(p => myJobIds.includes(p.jobId)).length;
                 document.getElementById('client-pitches-count').innerText = relatedPitchesCount;
+                document.getElementById('client-active-orders').innerText = myJobs.filter(j => j.status === 'APPROVED').length;
+                document.getElementById('client-completed-orders').innerText = myJobs.filter(j => j.status === 'COMPLETED').length;
 
                 const clientJobTable = document.getElementById('client-job-table');
                 clientJobTable.innerHTML = '';
