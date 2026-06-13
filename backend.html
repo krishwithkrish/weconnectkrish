@@ -1733,6 +1733,7 @@ async function executeFinalAdminDelete(jobId) {
             }
 
             if (sessionRole === 'admin') {
+              try {
                 const adminJobTable = document.getElementById('admin-job-table');
                 adminJobTable.innerHTML = '';
                 if (jobs.length === 0) {
@@ -1881,6 +1882,7 @@ async function executeFinalAdminDelete(jobId) {
                         `;
                     });
                 }
+              } catch(e) { console.error('[weconnect] Admin render error:', e); }
             }
         }
 
@@ -1931,6 +1933,49 @@ async function handlePasswordReset() {
 (async function boot() {
     await refreshAll();
 
+    // ── Always start polling + realtime regardless of login path ──
+    setInterval(async function() {
+        await refreshAll();
+    }, 3000);
+
+    document.addEventListener('visibilitychange', async function() {
+        if (document.visibilityState === 'visible') {
+            await refreshAll();
+        }
+    });
+
+    function subscribeRealtime() {
+        return _supabase
+            .channel('weconnect-realtime-all')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'jobs' }, async () => {
+                await fetchTable('wconnect_jobs');
+                renderAllViews();
+            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'employers' }, async () => {
+                await fetchTable('wconnect_employers');
+                renderAllViews();
+            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'agencies' }, async () => {
+                await fetchTable('wconnect_agencies');
+                renderAllViews();
+            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'pitches' }, async () => {
+                await fetchTable('wconnect_pitches');
+                renderAllViews();
+            })
+            .subscribe(async (status, err) => {
+                if (status === 'SUBSCRIBED') {
+                    console.log('[weconnect] Realtime channel active — all tables live.');
+                }
+                if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+                    console.warn('[weconnect] Realtime channel dropped (' + status + '), reconnecting…');
+                    await _supabase.removeAllChannels();
+                    setTimeout(subscribeRealtime, 2000);
+                }
+            });
+    }
+    subscribeRealtime();
+
     // Detect password reset redirect from email link
     const { data: { session } } = await _supabase.auth.getSession();
     const urlParams  = new URLSearchParams(window.location.search);
@@ -1957,36 +2002,6 @@ async function handlePasswordReset() {
         switchRole('landing');
     }
 
-    setInterval(async function() {
-        await refreshAll();
-    }, 5000);
-
-    // ── Supabase Realtime subscriptions for instant UI updates ────
-    // Subscribe to all four tables so every portal (admin, employer, agency) 
-    // reflects changes immediately without waiting for the next poll cycle.
-    const _realtimeChannel = _supabase
-        .channel('weconnect-realtime-all')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'jobs' }, async () => {
-            await fetchTable('wconnect_jobs');
-            renderAllViews();
-        })
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'employers' }, async () => {
-            await fetchTable('wconnect_employers');
-            renderAllViews();
-        })
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'agencies' }, async () => {
-            await fetchTable('wconnect_agencies');
-            renderAllViews();
-        })
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'pitches' }, async () => {
-            await fetchTable('wconnect_pitches');
-            renderAllViews();
-        })
-        .subscribe((status) => {
-            if (status === 'SUBSCRIBED') {
-                console.log('[weconnect] Realtime channel active — all tables live.');
-            }
-        });
 })();
 
 // Function to open the Job Order Container/Modal
